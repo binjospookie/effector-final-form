@@ -1,0 +1,14 @@
+node_modules/
+.idea/
+dist/
+.cache/
+build/
+.DS_Store
+coverage/
+lerna-debug.log
+**/*.zip
+toolchain/local-deploy/config.json
+.vscode
+!toolchain/build/
+.swc/
+doc/static/project-graph/
