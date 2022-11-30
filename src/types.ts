@@ -1,4 +1,4 @@
-type FieldId = string;
+type FieldName = string;
 type FieldValue = string;
 
 type FailedValidation = {
@@ -14,9 +14,9 @@ type ValidationResult = FailedValidation | SuccessedValidation;
 type Validator = (value: FieldValue) => ValidationResult;
 
 type Field = {
-  id: FieldId;
+  name: FieldName;
   initialValue?: FieldValue;
   validator: Validator;
 };
 
-export type { Field, FieldId, FieldValue, ValidationResult, FailedValidation };
+export type { Field, FieldName, FieldValue, ValidationResult, FailedValidation };

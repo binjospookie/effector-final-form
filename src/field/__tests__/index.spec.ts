@@ -10,13 +10,13 @@ describe.each([
 ])('filed initial values %o', ({ initialValue, meta, fieldValue }) => {
   test('', () => {
     const { $field } = createFormField({
-      id: 'name',
+      name: 'name',
       validator,
       initialValue,
     });
 
     expect($field.getState()).toStrictEqual({
-      id: 'name',
+      name: 'name',
       meta,
       value: fieldValue,
     });
@@ -26,7 +26,7 @@ describe.each([
 test('api.setValue', async () => {
   const scope = fork();
   const { $field, api } = createFormField({
-    id: 'name',
+    name: 'name',
     validator,
   });
 

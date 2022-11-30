@@ -15,7 +15,7 @@ type Meta = {
 };
 
 type FormField = {
-  id: Field['id'];
+  name: Field['name'];
   meta: Meta;
   value: FieldValue;
 };
@@ -27,8 +27,9 @@ export const createFormField = (field: Field) => {
 
   const initialValue = field.initialValue ?? '';
   const initialValidation = field.validator(initialValue);
+
   const $field = createStore<FormField>({
-    id: field.id,
+    name: field.name,
     meta: {
       dirty: false,
       error: 'errorText' in initialValidation ? initialValidation.errorText : null,
@@ -47,7 +48,7 @@ export const createFormField = (field: Field) => {
       valid: validationResult.isValid,
     };
 
-    return { id: state.id, meta, value };
+    return { name: state.name, meta, value };
   });
 
   return {
