@@ -1,5 +1,5 @@
 import { createEvent, createStore } from 'effector';
-import { equals, mergeRight } from 'ramda';
+import { equals } from 'ramda';
 
 import type { FailedValidation, Field, FieldValue, ValidationResult } from 'types';
 
