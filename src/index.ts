@@ -1,4 +1,3 @@
-// todo: fields meta
 // todo: form meta
 // todo: fields validation
 // todo: form validation
