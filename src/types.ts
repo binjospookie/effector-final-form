@@ -1,9 +1,22 @@
 type FieldId = string;
 type FieldValue = string;
 
-type Field = {
-  readonly id: FieldId;
-  readonly value?: FieldValue;
+type FailedValidation = {
+  isValid: false;
+  errorText: string;
+};
+type SuccessedValidation = {
+  isValid: true;
 };
 
-export type { Field, FieldId, FieldValue };
+type ValidationResult = FailedValidation | SuccessedValidation;
+
+type Validator = (value: FieldValue) => ValidationResult;
+
+type Field = {
+  id: FieldId;
+  initialValue?: FieldValue;
+  validator: Validator;
+};
+
+export type { Field, FieldId, FieldValue, ValidationResult, FailedValidation };
