@@ -14,7 +14,7 @@ export default new Promise(async (resolve) => {
     maxConcurrency: 25,
     testEnvironment: 'node',
     transform: {
-      '\\.(t|j)sx?$': './transformers.js',
+      '^.+\\.(t|j)sx?$': ['@swc/jest'],
     },
     coverageReporters: ['text'],
     // "jest-haste-map: duplicate manual mock found" because we have esm and cjs build
