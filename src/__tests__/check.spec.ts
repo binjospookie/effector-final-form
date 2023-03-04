@@ -22,7 +22,7 @@ it('', async () => {
   await allSettled(api.changeFx, { scope, params: { name: 'a', value: '6' } });
   await allSettled(api.blurFx, { scope, params: 'a' });
 
-  console.log(scope.getState($formState));
+  console.log(scope.getState($fields));
 
   expect(1).toBe(1);
 });

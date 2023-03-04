@@ -7,6 +7,7 @@ import type { Config as FFConfig } from 'final-form';
 
 import { createApi } from './createApi';
 import { createFields } from 'createFields';
+import { subscription } from 'createFormState/subscription';
 
 type FormConfig<FormValues> = Omit<
   FFConfig<FormValues>,
@@ -17,11 +18,16 @@ const createForm = <FormValues>(config: FormConfig<FormValues>) => {
   const ffForm = ffCreateForm(config);
 
   const domain = createDomain();
-  const { $fields, updateFields } = createFields(domain, ffForm);
-  const $formState = createFormState(domain, ffForm, updateFields);
-  const api = createApi(domain, ffForm, updateFields);
+  const { $fields, fieldsApi } = createFields(domain, ffForm);
+  const { $formState, formStateApi } = createFormState(domain, ffForm);
+  const formApi = createApi(domain, ffForm, fieldsApi, formStateApi);
 
-  return { $formState, api, $fields, ffForm };
+  ffForm.subscribe((state) => {
+    formStateApi.update(state);
+    fieldsApi.update();
+  }, subscription);
+
+  return { $formState, api: formApi, $fields, ffForm };
 };
 
 export { createForm };

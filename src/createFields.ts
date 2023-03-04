@@ -14,13 +14,15 @@ const createFields = <FormValues, InitialFormValues = Partial<FormValues>>(
     // @ts-expect-error
     form.getRegisteredFields().reduce((acc, name) => ({ ...acc, [name]: form.getFieldState(name) }), {} as State);
 
-  const updateFields = createEvent();
+  const fieldsApi = {
+    update: createEvent(),
+  };
 
   const $fields = domain.store<State>(calculateFields());
 
-  sample({ clock: updateFields, fn: calculateFields, target: $fields });
+  sample({ clock: fieldsApi.update, fn: calculateFields, target: $fields });
 
-  return { $fields, updateFields };
+  return { $fields, fieldsApi };
 };
 
 export { createFields };
