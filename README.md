@@ -1,5 +1,7 @@
 # eff-form
 
+[sandbox](https://stackblitz.com/edit/react-ts-xjh6yd?file=effector-final-form%2FcreateFields.ts)
+
 ## Limitations
 
 - can't achieve scope because of subscribe on form
