@@ -15,6 +15,10 @@ const createForm = <FormValues>(config: FormConfig<FormValues>) => {
 
   const domain = createDomain();
   const $formState = createFormState(domain, ffForm);
+  ffForm.getRegisteredFields()
+  // const $fields = domain.store();
+
+  ffForm.getState()?.validating
 
   return { ffForm, $formState };
 };

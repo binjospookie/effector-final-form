@@ -9,13 +9,20 @@ const createFormState = <FormValues, InitialFormValues = Partial<FormValues>>(
   domain: Domain,
   form: FFFormApi<FormValues, InitialFormValues>,
 ) => {
-  type State = FFFormState<FormValues, InitialFormValues>;
+  type State = FFFormState<FormValues, InitialFormValues> & {
+    isValidationPaused: boolean;
+  };
 
-  const $formState = domain.store<State>(form.getState());
+  const initialFormState = form.getState();
+  const $formState = domain.store<State>({
+    ...initialFormState,
+    isValidationPaused: !Boolean(initialFormState.validating),
+  });
 
   form.subscribe((state) => {
+    const nextState = { ...$formState.defaultState, ...state };
     // @ts-expect-error okk
-    launch($formState, { ...$formState.defaultState, ...state });
+    launch($formState, { ...nextState, isValidationPaused: !Boolean(nextState.validating) });
   }, subscription);
 
   return $formState;
