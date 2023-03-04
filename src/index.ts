@@ -1,40 +1,54 @@
-// // todo: form meta
-// // todo: fields validation
-// // todo: form validation
-// // todo: form sending
+import { allSettled, clearNode, createApi, createDomain, createEffect, createEvent, fork, launch } from 'effector';
+import { createForm as ffCreateForm } from 'final-form';
 
-// import { combine } from 'effector';
-// import { every } from 'patronum';
-// import { mergeRight } from 'rambda';
+const createFormApi = (form: ReturnType<typeof ffCreateForm>) => {
+  const change = createEffect<{ name: string; value: string }, void>((x) => form.change(x.name, x.value));
 
-// import { createFormField } from 'field';
+  return {
+    change,
+  };
+};
 
-// import type { Field } from 'field';
+const createForm = () => {
+  const domain = createDomain();
 
-// export const createForm = (fields: Field[]) => {
-//   const fieldsList = fields.map((x) => createFormField(x).$field);
+  const form = ffCreateForm({ onSubmit: console.log });
 
-//   // true if the form values are different from the values it was initialized with.
-//   const $dirty = every({ stores: fieldsList, predicate: (f) => f.meta.dirty });
+  form.registerField('username', () => {}, { value: true });
 
-//   const $errorTexts = combine(fieldsList, (list) =>
-//     list.reduce((acc, f) => mergeRight(acc, { [f.name]: f.meta.errorText }), {}),
-//   );
+  const $values = domain.store({});
 
-//   // an object full of booleans, with a boolean value for each field name denoting whether that field is modified or not.
-//   const $modified = combine(fieldsList, (list) =>
-//     list.reduce((acc, f) => mergeRight(acc, { [f.name]: f.meta.modified }), {}),
-//   );
+  // https://effector.dev/docs/api/effector/scopebind/
+  form.subscribe(
+    (x) => {
+      launch($values, x.values);
+    },
+    { values: true },
+  );
 
-//   // true if neither the form nor any of its fields has a validation or submission error.
-//   const $valid = every({ stores: fieldsList, predicate: (f) => f.meta.valid });
+  const api = createFormApi(form);
 
-//   return {
-//     $dirty,
-//     $errorTexts,
-//     $modified,
-//     $valid,
-//   };
-// };
+  return { $values, api, domain };
+};
 
-export const T = () => true;
+const { $values, api, domain } = createForm();
+const { $values: $2, api: api2 } = createForm();
+
+$values.watch((x) => console.log(`$1 ${JSON.stringify(x, undefined)}`));
+$2.watch((x) => console.log(`$2 ${JSON.stringify(x, undefined)}`));
+api.change({ name: 'username', value: 'biba' });
+api.change({ name: 'username', value: 'boba' });
+
+api2.change({ name: 'lol', value: 'kek' });
+
+clearNode(domain, { deep: true });
+
+console.log('clear domain');
+
+api2.change({ name: 'should', value: 'work' });
+
+const scope = fork();
+
+await allSettled(api2.change, { scope, params: { name: 'scope', value: 'works' } });
+
+console.log(scope.getState($2), '$2 with scope');
