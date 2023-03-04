@@ -7,13 +7,16 @@ const createFields = <FormValues, InitialFormValues = Partial<FormValues>>(
   domain: Domain,
   form: FFFormApi<FormValues, InitialFormValues>,
 ) => {
-  type Field = NonNullable<ReturnType<typeof form['getFieldState']>>;
+  type Field = NonNullable<ReturnType<(typeof form)['getFieldState']>>;
   type State = { [T in keyof FormValues]: Field };
 
   const calculateFields = () =>
     form
       .getRegisteredFields()
-      .reduce((acc, name) => Object.assign(acc, { [name]: form.getFieldState(name as keyof FormValues) }), {} as State);
+      .reduce(
+        (acc, name) => Object.assign({}, acc, { [name]: form.getFieldState(name as keyof FormValues) }),
+        {} as State,
+      );
 
   const fieldsApi = {
     update: createEvent(),

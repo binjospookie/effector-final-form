@@ -18,9 +18,9 @@ const createFormState = <FormValues, InitialFormValues = Partial<FormValues>>(
   };
 
   const $formState = domain
-    .store<State>(Object.assign(form.getState(), { isValidationPaused: false }))
-    .on(formStateApi.update, Object.assign)
-    .on(formStateApi.setValidationPaused, (s, isValidationPaused) => Object.assign(s, { isValidationPaused }));
+    .store<State>(Object.assign({}, form.getState(), { isValidationPaused: false }))
+    .on(formStateApi.update, (s, p) => Object.assign({}, s, p))
+    .on(formStateApi.setValidationPaused, (s, isValidationPaused) => Object.assign({}, s, { isValidationPaused }));
 
   form.subscribe((state) => {
     // @ts-expect-error

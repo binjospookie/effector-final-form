@@ -10,7 +10,8 @@ import { createFields } from 'createFields';
 
 type FormConfig<FormValues> = Omit<FFConfig<FormValues>, 'mutators' | 'debug'>;
 
-const createForm = <FormValues>(config: FormConfig<FormValues>) => {
+// https://stackblitz.com/edit/react-ts-xjh6yd?file=effector-final-form%2FcreateFormState%2Findex.ts,index.tsx
+export const createForm = <FormValues>(config: FormConfig<FormValues>) => {
   const ffForm = ffCreateForm(config);
 
   const domain = createDomain();
@@ -20,5 +21,3 @@ const createForm = <FormValues>(config: FormConfig<FormValues>) => {
 
   return { $formState, api: formApi, $fields, ffForm };
 };
-
-export { createForm };
