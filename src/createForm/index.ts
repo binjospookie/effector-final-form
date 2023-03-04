@@ -15,8 +15,8 @@ const createForm = <FormValues>(config: FormConfig<FormValues>) => {
   const ffForm = ffCreateForm(config);
 
   const domain = createDomain();
-  const $formState = createFormState(domain, ffForm);
   const api = createApi(domain, ffForm);
+  const $formState = createFormState(domain, ffForm);
   // const $fields = domain.store();
 
   ffForm.getState()?.validating;
