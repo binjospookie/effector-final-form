@@ -8,6 +8,7 @@
 ## Differences
 
 - `isValidationPaused` is store
+- `registerField` signature
 
 - no `form.getFieldState`
 - no `form.getRegisteredFields`
