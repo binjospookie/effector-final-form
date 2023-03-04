@@ -2,6 +2,7 @@ import { createEvent } from 'effector';
 
 import type { Domain } from 'effector';
 import type { FormApi as FFFormApi, FormState as FFFormState } from 'final-form';
+import { subscription } from './subscription';
 
 const createFormState = <FormValues, InitialFormValues = Partial<FormValues>>(
   domain: Domain,
@@ -20,6 +21,11 @@ const createFormState = <FormValues, InitialFormValues = Partial<FormValues>>(
     .store<State>(Object.assign(form.getState(), { isValidationPaused: false }))
     .on(formStateApi.update, Object.assign)
     .on(formStateApi.setValidationPaused, (s, isValidationPaused) => Object.assign(s, { isValidationPaused }));
+
+  form.subscribe((state) => {
+    // @ts-expect-error
+    formStateApi.update(state);
+  }, subscription);
 
   return { $formState, formStateApi };
 };

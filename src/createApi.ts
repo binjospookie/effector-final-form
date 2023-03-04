@@ -21,40 +21,44 @@ const createApi = <FormValues, InitialFormValues = Partial<FormValues>>(
   const changeHandler = ({ name, value }: ChangeConfig<FieldNames>) => form.change(name, value);
   const registerFieldHandler = ({ name, config }: RegisterFieldConfig) => {
     form.registerField(name, () => {}, {}, config);
-    fieldsApi.update();
+  };
+
+  const pauseValidationHandler = () => {
+    formStateApi.setValidationPaused(true);
+    form.pauseValidation();
+  };
+  const resumeValidationHandler = () => {
+    formStateApi.setValidationPaused(true);
+    form.pauseValidation();
   };
 
   const api = {
     blurFx: domain.effect(form.blur),
     changeFx: domain.effect(changeHandler),
     focusFx: domain.effect(form.focus),
-    initialize: domain.event<Parameters<Form['initialize']>[0]>(),
-    pauseValidation: domain.event(),
-    registerField: domain.event<RegisterFieldConfig>(),
-    reset: domain.event<Parameters<Form['reset']>[0]>(),
-    resetFieldState: domain.event<FieldNames>(),
-    restart: domain.event<Parameters<Form['restart']>[0]>(),
-    resumeValidation: domain.event(),
+    initialize: domain.effect(form.initialize),
+    pauseValidation: domain.effect(pauseValidationHandler),
+    registerField: domain.effect(registerFieldHandler),
+    reset: domain.effect(form.reset),
+    resetFieldState: domain.effect(form.resetFieldState),
+    restart: domain.effect(form.restart),
+    resumeValidation: domain.effect(resumeValidationHandler),
     submitFx: domain.effect(form.submit),
   };
 
   sample({
-    clock: api.pauseValidation,
-    fn: () => true,
-    target: formStateApi.setValidationPaused,
-  }).watch(form.pauseValidation);
-
-  sample({
-    clock: api.pauseValidation,
-    fn: () => false,
-    target: formStateApi.setValidationPaused,
-  }).watch(form.resumeValidation);
-
-  api.initialize.watch(form.initialize);
-  api.registerField.watch(registerFieldHandler);
-  api.reset.watch(form.reset);
-  api.resetFieldState.watch(form.resetFieldState);
-  api.restart.watch(form.restart);
+    clock: [
+      api.blurFx.done,
+      api.changeFx.done,
+      api.focusFx.done,
+      api.initialize.done,
+      api.registerField.done,
+      api.reset.done,
+      api.resetFieldState.done,
+      api.restart.done,
+    ],
+    target: fieldsApi.update,
+  });
 
   return api;
 };

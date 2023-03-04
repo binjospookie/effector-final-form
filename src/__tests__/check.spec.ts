@@ -1,6 +1,8 @@
 import { allSettled, fork } from 'effector';
 import { createForm } from '../index';
 
+// bug in restart
+
 it('', async () => {
   const scope = fork();
   const { $formState, api, $fields } = createForm<{ a: string }>({
@@ -8,6 +10,7 @@ it('', async () => {
     validate: (f) => ({
       ...(f.a === '5' ? null : { a: 'Required' }),
     }),
+    destroyOnUnregister: true,
   });
 
   await allSettled(api.registerField, {
@@ -20,7 +23,8 @@ it('', async () => {
   await allSettled(api.focusFx, { scope, params: 'a' });
   await allSettled(api.changeFx, { scope, params: { name: 'a', value: '5' } });
   await allSettled(api.changeFx, { scope, params: { name: 'a', value: '6' } });
-  await allSettled(api.blurFx, { scope, params: 'a' });
+
+  await allSettled(api.initialize, { scope, params: { a: '1' } });
 
   console.log(scope.getState($fields));
 
