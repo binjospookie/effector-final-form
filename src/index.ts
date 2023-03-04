@@ -1,14 +1,8 @@
-import { createDomain } from 'effector';
-import { createForm as ffCreateForm } from 'final-form';
+import { createForm } from 'createForm';
 
-import type { Config as FFConfig } from 'final-form';
+const { $formState, ffForm } = createForm({
+  onSubmit: () => {},
+  initialValues: { a: '1' },
+});
 
-type FormConfig<T> = Omit<FFConfig<T>, 'mutators' | 'debug' | 'destroyOnUnregister' | 'keepDirtyOnReinitialize'>;
-
-const createForm = <FormValues>(config: FormConfig<FormValues>) => {
-  const domain = createDomain();
-
-  const form = ffCreateForm(config);
-
-  return { form };
-};
+console.log($formState.getState().initialValues);
