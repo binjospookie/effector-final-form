@@ -3,14 +3,18 @@ import { createForm } from '../index';
 
 it('', async () => {
   const scope = fork();
-  const { $formState, api, $fields } = createForm<{ a: string }>({
+  // <{ a: string }, ['active', 'dirty']>
+  const { $formState, api, $fields } = createForm({
     onSubmit: () => {},
     validate: (f) => ({
       ...(f.a === '5' ? null : { a: 'Required' }),
     }),
+    initialValues: { a: '1' },
     destroyOnUnregister: true,
-    subscribeOn: ['active'],
+    subscribeOn: ['active', 'submitting'],
   });
+
+  // $formState.getState();
 
   await allSettled(api.registerField, {
     scope,

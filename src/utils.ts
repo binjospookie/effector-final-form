@@ -1,8 +1,8 @@
-import type { O } from 'ts-toolbelt';
+import { Pick, Nil } from './types';
 
-const isNil = <T>(x: T | undefined | null): x is undefined | null => x === null || x === undefined;
+const isNil = <T>(x: T | Nil): x is Nil => x === null || x === undefined;
 
-const pick = <K extends string, T extends Record<string, any>>(propsToPick: K[], input: T): O.Pick<T, K> =>
+const pick = <K extends string, T extends Record<string, any>>(propsToPick: K[], input: T): Pick<T, K> =>
   // @ts-expect-error
   isNil(input)
     ? {}

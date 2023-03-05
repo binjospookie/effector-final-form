@@ -4,17 +4,18 @@ import { createFormState } from './createFormState';
 
 import type { Domain } from 'effector';
 import type { FormApi as FFFormApi } from 'final-form';
+import type { FormSubscription } from './types';
 
-const createApi = <FormValues, InitialFormValues = Partial<FormValues>>(
+const createApi = <FormValues, T extends FormSubscription>(
   domain: Domain,
-  form: FFFormApi<FormValues, InitialFormValues>,
-  fieldsApi: ReturnType<typeof createFields<FormValues, InitialFormValues>>['fieldsApi'],
-  formStateApi: ReturnType<typeof createFormState<FormValues, InitialFormValues>>['formStateApi'],
+  form: FFFormApi<FormValues>,
+  fieldsApi: ReturnType<typeof createFields<FormValues>>['fieldsApi'],
+  formStateApi: ReturnType<typeof createFormState<FormValues, T>>['formStateApi'],
 ) => {
   type Form = typeof form;
   type FieldNames = keyof FormValues;
 
-  type ChangeConfig<F extends FieldNames> = { name: F; value?: FormValues[F] };
+  type ChangeConfig<T extends FieldNames> = { name: T; value?: FormValues[T] };
   type RegisterFieldParams = Parameters<Form['registerField']>;
   type RegisterFieldConfig = { name: RegisterFieldParams[0]; config?: RegisterFieldParams[3] };
 

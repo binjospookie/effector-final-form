@@ -11,9 +11,7 @@
   },
   "dependencies": {
     "effector": "*",
-    "final-form": "4",
-    "patronum": "1",
-    "ts-toolbelt": "9"
+    "final-form": "4"
   },
   "devDependencies": {
     "@swc/core": "1",

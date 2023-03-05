@@ -3,15 +3,15 @@ import { createEvent } from 'effector';
 import { pick } from './utils';
 
 import type { Domain } from 'effector';
-import type { FormApi as FFFormApi, FormState as FFFormState, FormSubscription } from 'final-form';
-import type { L } from 'ts-toolbelt';
+import type { FormApi as FFFormApi, FormState as FFFormState } from 'final-form';
+import type { FormSubscription } from './types';
 
-const createFormState = <FormValues, InitialFormValues = Partial<FormValues>>(config: {
+const createFormState = <FormValues, T extends FormSubscription>(config: {
   domain: Domain;
-  form: FFFormApi<FormValues, InitialFormValues>;
-  subscribeOn: (keyof FormSubscription)[];
+  form: FFFormApi<FormValues>;
+  subscribeOn: T;
 }) => {
-  type State = Pick<FFFormState<FormValues, InitialFormValues>, L.UnionOf<(typeof config)['subscribeOn']>> & {
+  type State = Pick<FFFormState<FormValues>, T[number]> & {
     isValidationPaused: boolean;
   };
 
@@ -27,7 +27,7 @@ const createFormState = <FormValues, InitialFormValues = Partial<FormValues>>(co
 
   const $formState = config.domain
     .store<State>(initialState)
-    .on(formStateApi.update, (s, p) => ({ ...s, ...p }))
+    .on(formStateApi.update, (s, p) => Object.assign({}, s, p))
     .on(formStateApi.setValidationPaused, (s, isValidationPaused) => Object.assign({}, s, { isValidationPaused }));
 
   config.form.subscribe(
