@@ -58,6 +58,7 @@ const createApi = <FormValues, InitialFormValues = Partial<FormValues>>(
       api.restart.done,
     ],
     target: fieldsApi.update,
+    greedy: true,
   });
 
   return api;
