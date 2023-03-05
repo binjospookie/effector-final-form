@@ -16,7 +16,7 @@ export const createForm = <FormValues>(config: FormConfig<FormValues>) => {
   const domain = createDomain();
   const { $fields, fieldsApi } = createFields<FormValues>(domain, ffForm);
   const { $formState, formStateApi } = createFormState<FormValues>(domain, ffForm);
-  const formApi = createApi<FormValues>(domain, ffForm, fieldsApi, formStateApi);
+  const api = createApi<FormValues>(domain, ffForm, fieldsApi, formStateApi);
 
-  return { $formState, api: formApi, $fields, ffForm };
+  return { $formState, api, $fields, ffForm };
 };
