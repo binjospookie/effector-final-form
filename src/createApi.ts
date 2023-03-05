@@ -1,9 +1,9 @@
 import { sample } from 'effector';
-import { createFields } from './createFields';
-import { createFormState } from './createFormState';
 
 import type { Domain } from 'effector';
 import type { FormApi as FFFormApi } from 'final-form';
+import type { createFields } from './createFields';
+import type { createFormState } from './createFormState';
 import type { FormSubscription } from './types';
 
 const createApi = <FormValues, T extends FormSubscription>(config: {
