@@ -11,6 +11,7 @@
 
 - `isValidationPaused` is store
 - `registerField` signature
+- `undefined` replaced with `null`
 
 - no `form.getFieldState`
 - no `form.getRegisteredFields`
