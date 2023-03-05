@@ -11,4 +11,4 @@ const pick = <K extends string, T extends Record<string, any>>(propsToPick: K[],
         {},
       );
 
-export { pick };
+export { pick, isNil };

@@ -13,17 +13,19 @@ export const createForm = <FormValues, T extends FormSubscription>(
     subscribeOn: T;
   },
 ) => {
-  const ffForm = ffCreateForm(config);
+  const { subscribeOn, ...finalFormConfig } = config;
+
+  const finalForm = ffCreateForm(finalFormConfig);
 
   const domain = createDomain();
-  const { $fields, fieldsApi } = createFields<FormValues>(domain, ffForm);
+  const { $fields, fieldsApi } = createFields<FormValues>({ domain, finalForm });
   const { $formState, formStateApi } = createFormState<FormValues, T>({
     domain,
-    form: ffForm,
-    subscribeOn: config.subscribeOn,
+    finalForm,
+    subscribeOn,
   });
 
-  const api = createApi<FormValues, T>(domain, ffForm, fieldsApi, formStateApi);
+  const api = createApi<FormValues, T>({ domain, finalForm, fieldsApi, formStateApi });
 
-  return { $formState, api, $fields, ffForm };
+  return { $formState, api, $fields, finalForm };
 };

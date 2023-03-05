@@ -11,10 +11,10 @@ it('', async () => {
     }),
     initialValues: { a: '1' },
     destroyOnUnregister: true,
-    subscribeOn: ['active', 'submitting'],
+    subscribeOn: ['visited', 'active'],
   });
 
-  // $formState.getState();
+  $formState.map((x) => x.active);
 
   await allSettled(api.registerField, {
     scope,

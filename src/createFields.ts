@@ -1,23 +1,25 @@
-import { createEvent, sample } from 'effector';
+import { sample } from 'effector';
 
 import type { Domain } from 'effector';
 import type { FormApi as FFFormApi } from 'final-form';
 
-const createFields = <FormValues>(domain: Domain, form: FFFormApi<FormValues>) => {
-  type Field = NonNullable<ReturnType<(typeof form)['getFieldState']>>;
+const createFields = <FormValues>(config: { domain: Domain; finalForm: FFFormApi<FormValues> }) => {
+  const { domain, finalForm } = config;
+
+  type Field = NonNullable<ReturnType<(typeof finalForm)['getFieldState']>>;
   type State = { [T in keyof FormValues]: Field };
 
   const calculateFields = () =>
-    form.getRegisteredFields().reduce(
+    finalForm.getRegisteredFields().reduce(
       (acc, name) =>
         Object.assign({}, acc, {
-          [name]: form.getFieldState(name as keyof FormValues),
+          [name]: finalForm.getFieldState(name as keyof FormValues),
         }),
       {} as State,
     );
 
   const fieldsApi = {
-    update: createEvent(),
+    update: domain.event(),
   };
 
   const $fields = domain.store<State>(calculateFields());

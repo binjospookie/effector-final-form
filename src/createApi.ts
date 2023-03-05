@@ -6,45 +6,47 @@ import type { Domain } from 'effector';
 import type { FormApi as FFFormApi } from 'final-form';
 import type { FormSubscription } from './types';
 
-const createApi = <FormValues, T extends FormSubscription>(
-  domain: Domain,
-  form: FFFormApi<FormValues>,
-  fieldsApi: ReturnType<typeof createFields<FormValues>>['fieldsApi'],
-  formStateApi: ReturnType<typeof createFormState<FormValues, T>>['formStateApi'],
-) => {
-  type Form = typeof form;
+const createApi = <FormValues, T extends FormSubscription>(config: {
+  domain: Domain;
+  finalForm: FFFormApi<FormValues>;
+  fieldsApi: ReturnType<typeof createFields<FormValues>>['fieldsApi'];
+  formStateApi: ReturnType<typeof createFormState<FormValues, T>>['formStateApi'];
+}) => {
+  const { domain, finalForm, fieldsApi, formStateApi } = config;
+
+  type Form = typeof finalForm;
   type FieldNames = keyof FormValues;
 
   type ChangeConfig<T extends FieldNames> = { name: T; value?: FormValues[T] };
   type RegisterFieldParams = Parameters<Form['registerField']>;
   type RegisterFieldConfig = { name: RegisterFieldParams[0]; config?: RegisterFieldParams[3] };
 
-  const changeHandler = ({ name, value }: ChangeConfig<FieldNames>) => form.change(name, value);
+  const changeHandler = ({ name, value }: ChangeConfig<FieldNames>) => finalForm.change(name, value);
   const registerFieldHandler = ({ name, config }: RegisterFieldConfig) => {
-    form.registerField(name, () => {}, {}, config);
+    finalForm.registerField(name, () => {}, {}, config);
   };
 
   const pauseValidationHandler = () => {
     formStateApi.setValidationPaused(true);
-    form.pauseValidation();
+    finalForm.pauseValidation();
   };
   const resumeValidationHandler = () => {
     formStateApi.setValidationPaused(true);
-    form.pauseValidation();
+    finalForm.pauseValidation();
   };
 
   const api = {
-    blurFx: domain.effect(form.blur),
+    blurFx: domain.effect(finalForm.blur),
     changeFx: domain.effect(changeHandler),
-    focusFx: domain.effect(form.focus),
-    initialize: domain.effect(form.initialize),
+    focusFx: domain.effect(finalForm.focus),
+    initialize: domain.effect(finalForm.initialize),
     pauseValidation: domain.effect(pauseValidationHandler),
     registerField: domain.effect(registerFieldHandler),
-    reset: domain.effect(form.reset),
-    resetFieldState: domain.effect(form.resetFieldState),
-    restart: domain.effect(form.restart),
+    reset: domain.effect(finalForm.reset),
+    resetFieldState: domain.effect(finalForm.resetFieldState),
+    restart: domain.effect(finalForm.restart),
     resumeValidation: domain.effect(resumeValidationHandler),
-    submitFx: domain.effect(form.submit),
+    submitFx: domain.effect(finalForm.submit),
   };
 
   sample({
