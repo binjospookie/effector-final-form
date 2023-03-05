@@ -7,12 +7,10 @@
   "license": "ISC",
   "type": "module",
   "scripts": {
-    "build": "esbuild ./src/index.ts --bundle --outfile=dist/out.js",
     "test": "jest --no-cache --no-watchman --runInBand"
   },
   "dependencies": {
     "effector": "*",
-    "esbuild": "^0.17.11",
     "final-form": "4",
     "patronum": "1",
     "ts-toolbelt": "9"

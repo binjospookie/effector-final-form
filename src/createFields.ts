@@ -11,12 +11,13 @@ const createFields = <FormValues, InitialFormValues = Partial<FormValues>>(
   type State = { [T in keyof FormValues]: Field };
 
   const calculateFields = () =>
-    form
-      .getRegisteredFields()
-      .reduce(
-        (acc, name) => Object.assign({}, acc, { [name]: form.getFieldState(name as keyof FormValues) }),
-        {} as State,
-      );
+    form.getRegisteredFields().reduce(
+      (acc, name) =>
+        Object.assign({}, acc, {
+          [name]: form.getFieldState(name as keyof FormValues),
+        }),
+      {} as State,
+    );
 
   const fieldsApi = {
     update: createEvent(),
