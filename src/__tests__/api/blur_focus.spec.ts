@@ -13,7 +13,7 @@ describe('api.blur_focus', () => {
   const scope = fork(domain);
 
   test('api.focusFx', async () => {
-    await allSettled(api.registerField, { scope, params: { name: 'firstName' } });
+    await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: [] } });
 
     expect(scope.getState($formState).active).toBe(null);
     expect(scope.getState($fields).firstName.active).toBe(false);

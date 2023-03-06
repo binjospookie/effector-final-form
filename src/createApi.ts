@@ -19,11 +19,24 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
 
   type ChangeConfig<T extends FieldNames> = { name: T; value?: FormValues[T] };
   type RegisterFieldParams = Parameters<Form['registerField']>;
-  type RegisterFieldConfig = { name: RegisterFieldParams[0]; config?: RegisterFieldParams[3] };
+  type RegisterFieldConfig<T extends readonly (keyof RegisterFieldParams[2])[]> = {
+    name: RegisterFieldParams[0];
+    subscribeOn: T;
+    config?: RegisterFieldParams[3];
+  };
 
   const changeHandler = ({ name, value }: ChangeConfig<FieldNames>) => finalForm.change(name, value);
-  const registerFieldHandler = ({ name, config }: RegisterFieldConfig) => {
-    finalForm.registerField(name, () => {}, {}, config);
+  const registerFieldHandler = <T extends readonly (keyof RegisterFieldParams[2])[]>({
+    name,
+    subscribeOn,
+    config,
+  }: RegisterFieldConfig<T>) => {
+    finalForm.registerField(
+      name,
+      () => {},
+      subscribeOn.reduce((acc, k) => ({ ...acc, [k]: true }), {}),
+      config,
+    );
   };
 
   const pauseValidationHandler = () => {
@@ -51,14 +64,15 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
 
   sample({
     clock: [
-      api.blurFx.done,
-      api.changeFx.done,
-      api.focusFx.done,
-      api.initialize.done,
-      api.registerField.done,
-      api.reset.done,
-      api.resetFieldState.done,
-      api.restart.done,
+      api.blurFx.finally,
+      api.changeFx.finally,
+      api.focusFx.finally,
+      api.initialize.finally,
+      api.registerField.finally,
+      api.reset.finally,
+      api.resetFieldState.finally,
+      api.restart.finally,
+      api.submitFx.finally,
     ],
     target: fieldsApi.update,
   });

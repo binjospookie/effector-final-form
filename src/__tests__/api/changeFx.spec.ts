@@ -12,7 +12,7 @@ describe('api.changeFx', () => {
     });
     const scope = fork(domain);
 
-    await allSettled(api.registerField, { scope, params: { name: 'firstName' } });
+    await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: ['value'] } });
     expect(scope.getState($formState).values).toStrictEqual({});
     expect(scope.getState($fields).firstName.value).toBe(undefined);
 
@@ -29,7 +29,7 @@ describe('api.changeFx', () => {
     });
     const scope = fork(domain);
 
-    await allSettled(api.registerField, { scope, params: { name: 'firstName' } });
+    await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: ['value'] } });
     expect(scope.getState($formState).values).toStrictEqual({ firstName: '' });
     expect(scope.getState($fields).firstName.value).toBe('');
 
