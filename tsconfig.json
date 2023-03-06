@@ -18,7 +18,8 @@
     "noEmit": false,
     "noUncheckedIndexedAccess": true,
     "declaration": true,
-    "typeRoots": ["overrides", "./node_modules/@types"]
+    "typeRoots": ["overrides", "./node_modules/@types"],
+    "types": ["vitest/globals"]
   },
-  "exclude": ["node_modules", "**/node_modules/*", "build", "**/build/*", "dist", "**/dist/*"]
+  "exclude": ["node_modules", "**/node_modules/*", "dist", "**/dist/*"]
 }

@@ -4,9 +4,7 @@
   "description": "",
   "author": "Viktor Pasynok",
   "license": "MIT",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "type": "module",
   "types": "dist/index.d.ts",
   "main": "dist/index.cjs",
@@ -18,19 +16,21 @@
     "build": "vite build --mode production",
     "prepublishOnly": "rm -rf ./package && clean-publish",
     "postpublish": "rm -rf ./package",
-    "test:code": "vitest run --coverage"
+    "test:code": "vitest run --coverage",
+    "test:types": "tsc -p ./src/test-typings",
+    "test": "pnpm run test:code && pnpm run test:types"
   },
   "peerDependencies": {
     "effector": "^22.1.2",
     "final-form": "^4.20.1"
   },
   "devDependencies": {
-    "@types/jest": "^29.4.0",
-    "@vitest/coverage-c8": "^0.29.2",
+    "@vitest/coverage-c8": "0.29.2",
     "clean-publish": "4.1.1",
     "effector": "22",
     "final-form": "4",
     "prettier": "2",
+    "tsd": "0.26.0",
     "typescript": "4.9.5",
     "vite": "4.1.4",
     "vite-plugin-dts": "2.0.2",

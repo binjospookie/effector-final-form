@@ -48,5 +48,5 @@ jobs:
         env:
           CI: true
 
-      # - name: Test types
-      #   run: pnpm test:types
+      - name: Test types
+        run: pnpm test:types
