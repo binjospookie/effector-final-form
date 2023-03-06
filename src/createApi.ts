@@ -27,12 +27,12 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
   };
 
   const pauseValidationHandler = () => {
-    formStateApi.setValidationPaused(true);
     finalForm.pauseValidation();
+    formStateApi.setValidationPaused(true);
   };
   const resumeValidationHandler = () => {
-    formStateApi.setValidationPaused(true);
-    finalForm.pauseValidation();
+    finalForm.resumeValidation();
+    formStateApi.setValidationPaused(false);
   };
 
   const api = {
