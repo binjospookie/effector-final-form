@@ -1,8 +1,9 @@
 import { allSettled, fork } from 'effector';
+import { vi } from 'vitest';
 
 import { createForm } from '../../index';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -41,7 +42,7 @@ describe('api.submitFx', () => {
       expect(scope.getState($fields).firstName.modifiedSinceLastSubmit).toBe(false);
 
       const submitPromise = allSettled(api.submitFx, { scope });
-      jest.runOnlyPendingTimers();
+      vi.runOnlyPendingTimers();
 
       expect(scope.getState($formState).submitting).toBe(true);
 
@@ -62,7 +63,7 @@ describe('api.submitFx', () => {
       expect(scope.getState($fields).firstName.modifiedSinceLastSubmit).toBe(true);
 
       const submitPromise = allSettled(api.submitFx, { scope });
-      jest.runOnlyPendingTimers();
+      vi.runOnlyPendingTimers();
 
       expect(scope.getState($formState).submitting).toBe(true);
 

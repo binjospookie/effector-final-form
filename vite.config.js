@@ -21,6 +21,14 @@ const config = defineConfig({
       include: ['./src/**'],
     }),
   ],
+  test: {
+    globals: true,
+    watch: false,
+    coverage: {
+      reporter: ['text'],
+      statements: 100,
+    },
+  },
 });
 
 export default config;
