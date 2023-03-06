@@ -43,10 +43,10 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # - name: Test code
-      #   run: pnpm test:code
-      #   env:
-      #     CI: true
+      - name: Test code
+        run: pnpm test:code
+        env:
+          CI: true
 
       # - name: Test types
       #   run: pnpm test:types

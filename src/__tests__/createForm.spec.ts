@@ -1,0 +1,32 @@
+import { createForm } from '../index';
+
+const onSubmitMock = () => {};
+
+describe('createForm', () => {
+  test('without initial values', () => {
+    const { $formState } = createForm<{ firstName: string }, ['initialValues', 'values']>({
+      onSubmit: onSubmitMock,
+      subscribeOn: ['initialValues', 'values'],
+    });
+
+    expect($formState.getState()).toStrictEqual({
+      initialValues: null,
+      isValidationPaused: false,
+      values: {},
+    });
+  });
+
+  test('with initial values', () => {
+    const { $formState } = createForm({
+      onSubmit: onSubmitMock,
+      initialValues: { firstName: 'John' },
+      subscribeOn: ['initialValues', 'values'],
+    });
+
+    expect($formState.getState()).toStrictEqual({
+      initialValues: { firstName: 'John' },
+      isValidationPaused: false,
+      values: { firstName: 'John' },
+    });
+  });
+});

@@ -16,7 +16,7 @@
     "build": "vite build --mode production",
     "prepublishOnly": "rm -rf ./package && clean-publish",
     "postpublish": "rm -rf ./package",
-    "test": "jest --no-cache --no-watchman --runInBand"
+    "test:code": "jest --no-cache --no-watchman --runInBand"
   },
   "peerDependencies": {
     "effector": "^22.1.2",
