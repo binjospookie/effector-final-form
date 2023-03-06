@@ -12,12 +12,16 @@ describe('api.initialize', () => {
     });
     const scope = fork(domain);
 
-    await allSettled(api.initialize, { scope, params: { firstName: 'John' } });
-    expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+    {
+      await allSettled(api.initialize, { scope, params: { firstName: 'John' } });
+      expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+    }
 
-    await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: [] } });
-    expect(scope.getState($fields).firstName.initial).toStrictEqual('John');
-    expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+    {
+      await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: [] } });
+      expect(scope.getState($fields).firstName.initial).toStrictEqual('John');
+      expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+    }
   });
 
   test('with initialValues', async () => {
@@ -28,11 +32,15 @@ describe('api.initialize', () => {
     });
     const scope = fork(domain);
 
-    await allSettled(api.initialize, { scope, params: { firstName: 'John' } });
-    expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+    {
+      await allSettled(api.initialize, { scope, params: { firstName: 'John' } });
+      expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+    }
 
-    await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: [] } });
-    expect(scope.getState($fields).firstName.initial).toStrictEqual('John');
-    expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+    {
+      await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: [] } });
+      expect(scope.getState($fields).firstName.initial).toStrictEqual('John');
+      expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+    }
   });
 });

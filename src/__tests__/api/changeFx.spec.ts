@@ -12,13 +12,17 @@ describe('api.changeFx', () => {
     });
     const scope = fork(domain);
 
-    await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: ['value'] } });
-    expect(scope.getState($formState).values).toStrictEqual({});
-    expect(scope.getState($fields).firstName.value).toBe(undefined);
+    {
+      await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: ['value'] } });
+      expect(scope.getState($formState).values).toStrictEqual({});
+      expect(scope.getState($fields).firstName.value).toBe(undefined);
+    }
 
-    await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'John' } });
-    expect(scope.getState($formState).values).toStrictEqual({ firstName: 'John' });
-    expect(scope.getState($fields).firstName.value).toBe('John');
+    {
+      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'John' } });
+      expect(scope.getState($formState).values).toStrictEqual({ firstName: 'John' });
+      expect(scope.getState($fields).firstName.value).toBe('John');
+    }
   });
 
   test('with initialValues', async () => {
@@ -29,12 +33,16 @@ describe('api.changeFx', () => {
     });
     const scope = fork(domain);
 
-    await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: ['value'] } });
-    expect(scope.getState($formState).values).toStrictEqual({ firstName: '' });
-    expect(scope.getState($fields).firstName.value).toBe('');
+    {
+      await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: ['value'] } });
+      expect(scope.getState($formState).values).toStrictEqual({ firstName: '' });
+      expect(scope.getState($fields).firstName.value).toBe('');
+    }
 
-    await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'John' } });
-    expect(scope.getState($formState).values).toStrictEqual({ firstName: 'John' });
-    expect(scope.getState($fields).firstName.value).toBe('John');
+    {
+      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'John' } });
+      expect(scope.getState($formState).values).toStrictEqual({ firstName: 'John' });
+      expect(scope.getState($fields).firstName.value).toBe('John');
+    }
   });
 });
