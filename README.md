@@ -1,5 +1,4 @@
-# eff-form
-
+# Effector-Final-Form
 
 
 [Demo](https://stackblitz.com/edit/react-ts-xjh6yd?file=index.tsx)
