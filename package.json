@@ -1,9 +1,18 @@
 {
   "name": "effector-final-form",
   "version": "0.0.1",
-  "description": "",
-  "author": "Viktor Pasynok",
+  "description": "☄️ Effector bindings for Final Form",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/binjospookie/effector-final-form.git"
+  },
+  "keywords": ["effector", "final form", "lib", "bindings"],
+  "author": "Viktor Pasynok <binjospookie@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/binjospookie/effector-final-form/issues"
+  },
+  "homepage": "https://github.com/binjospookie/effector-final-form#readme",
   "files": ["dist"],
   "type": "module",
   "types": "dist/index.d.ts",
