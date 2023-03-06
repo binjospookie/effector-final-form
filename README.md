@@ -1,6 +1,6 @@
-# effector-final-form
+# Effector + Final Form
 
-☄️ Effector bindings for Final Form
+☄️ Effector bindings for Final Form 🏁 
 
 [Demo](https://stackblitz.com/edit/react-ts-xjh6yd?file=index.tsx)
 
