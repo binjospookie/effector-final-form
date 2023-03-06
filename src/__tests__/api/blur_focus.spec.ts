@@ -4,7 +4,7 @@ import { createForm } from '../../index';
 
 const onSubmitMock = () => {};
 
-describe('active', () => {
+describe('api.blur_focus', () => {
   const { $formState, $fields, domain, api } = createForm({
     onSubmit: onSubmitMock,
     initialValues: { firstName: '' },

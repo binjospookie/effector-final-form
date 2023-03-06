@@ -4,7 +4,7 @@ import { createForm } from '../../index';
 
 const onSubmitMock = () => {};
 
-describe('isValidationPaused', () => {
+describe('api.pause_resume_validation', () => {
   const { $formState, domain, api } = createForm({
     onSubmit: onSubmitMock,
     subscribeOn: [],
