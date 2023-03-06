@@ -1,6 +1,8 @@
 # eff-form
 
-[sandbox](https://stackblitz.com/edit/react-ts-xjh6yd?file=effector-final-form%2FcreateFields.ts)
+
+
+[Demo](https://stackblitz.com/edit/react-ts-xjh6yd?file=index.tsx)
 
 ## Limitations
 
