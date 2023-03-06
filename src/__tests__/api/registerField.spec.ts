@@ -6,7 +6,7 @@ const onSubmitMock = () => {};
 
 describe('api.registerField', () => {
   test('without initialValues', async () => {
-    const { $fields, domain, api } = createForm<{ firstName: string }, ['values']>({
+    const { $formState, $fields, domain, api } = createForm<{ firstName: string }, ['values']>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values'],
     });
@@ -16,12 +16,12 @@ describe('api.registerField', () => {
       scope,
       params: { name: 'firstName', subscribeOn: ['value'], config: { defaultValue: 'defaultValue' } },
     });
-
+    expect(scope.getState($formState).values).toStrictEqual({ firstName: 'defaultValue' });
     expect(scope.getState($fields).firstName.value).toBe('defaultValue');
   });
 
   test('with initialValues', async () => {
-    const { $fields, domain, api } = createForm({
+    const { $formState, $fields, domain, api } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: '' },
       subscribeOn: ['values'],
@@ -29,7 +29,7 @@ describe('api.registerField', () => {
     const scope = fork(domain);
 
     await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: ['value'] } });
-
+    expect(scope.getState($formState).values).toStrictEqual({ firstName: '' });
     expect(scope.getState($fields).firstName.value).toBe('');
   });
 });
