@@ -17,11 +17,6 @@ module.exports = {
       title: '☄️ Effector + Final Form 🏁',
       items: [
         {
-          href: '/docs/installation',
-          position: 'left',
-          label: 'Installation',
-        },
-        {
           href: 'https://stackblitz.com/edit/react-ts-xjh6yd?file=index.tsx',
           position: 'left',
           label: 'Demo',
