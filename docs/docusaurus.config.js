@@ -1,11 +1,11 @@
 module.exports = {
   title: '☄️ effector final form',
-  url: 'https://binjospookie.github.io',
-  baseUrl: '/effector-final-form',
+  url: 'https://binjospookie.github.io/',
+  baseUrl: '/effector-final-form/',
   onBrokenLinks: 'warn',
   projectName: 'effector-final-form',
   organizationName: 'binjospookie',
-  deploymentBranch: 'master',
+  deploymentBranch: 'gh-pages',
   markdown: {
     // othervise we lost ```mermaid file=...``` syntax
     mermaid: false,
