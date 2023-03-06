@@ -9,8 +9,13 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
+  "publishConfig": {
+    "directory": "package"
+  },
   "scripts": {
     "build": "vite build --mode production",
+    "prepublishOnly": "rm -rf ./package && clean-publish",
+    "postpublish": "rm -rf ./package",
     "test": "jest --no-cache --no-watchman --runInBand"
   },
   "peerDependencies": {
@@ -21,6 +26,7 @@
     "@swc/core": "1",
     "@swc/jest": "0",
     "@types/jest": "29",
+    "clean-publish": "4.1.1",
     "effector": "22",
     "final-form": "4",
     "jest": "29",

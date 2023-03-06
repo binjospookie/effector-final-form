@@ -1,0 +1,10 @@
+{
+  "files": [
+    "vite.config.js",
+    "tsconfig.json",
+    "src"
+  ],
+  "access": "public",
+  "withoutPublish": true,
+  "tempDir": "package"
+}
