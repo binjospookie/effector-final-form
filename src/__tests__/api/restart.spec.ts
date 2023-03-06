@@ -20,7 +20,6 @@ describe('api.restart', () => {
 
     {
       await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: [] } });
-
       await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: undefined } });
 
       expect(scope.getState($fields).firstName.value).toBe(undefined);
