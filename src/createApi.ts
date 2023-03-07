@@ -1,4 +1,7 @@
 import { sample } from 'effector';
+import { fieldSubscriptionItems } from 'final-form';
+
+import { normalizeSubscriptions } from './utils';
 
 import type { Domain } from 'effector';
 import type { FormApi as FFFormApi } from 'final-form';
@@ -31,12 +34,8 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
     subscribeOn,
     config,
   }: RegisterFieldConfig<T>) => {
-    finalForm.registerField(
-      name,
-      () => {},
-      subscribeOn.reduce((acc, k) => ({ ...acc, [k]: true }), {}),
-      config,
-    );
+    // @ts-expect-error
+    finalForm.registerField(name, () => {}, normalizeSubscriptions(fieldSubscriptionItems, subscribeOn), config);
   };
 
   const pauseValidationHandler = () => {

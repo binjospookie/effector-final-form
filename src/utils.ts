@@ -11,4 +11,7 @@ const pick = <K extends string, T extends Record<string, any>>(propsToPick: K[],
         {},
       );
 
-export { pick, isNil };
+const normalizeSubscriptions = <T extends readonly string[]>(a: T, b: T) =>
+  a.reduce((acc, k) => ({ ...acc, [k]: b.includes(k) }), {});
+
+export { pick, isNil, normalizeSubscriptions };

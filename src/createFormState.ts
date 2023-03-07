@@ -1,4 +1,5 @@
-import { isNil, pick } from './utils';
+import { formSubscriptionItems } from 'final-form';
+import { isNil, normalizeSubscriptions, pick } from './utils';
 
 import type { Domain } from 'effector';
 import type {
@@ -41,14 +42,12 @@ const createFormState = <FormValues, T extends FormSubscription>(config: {
     .on(formStateApi.update, (s, p) => Object.assign({}, s, p))
     .on(formStateApi.setValidationPaused, (s, isValidationPaused) => Object.assign({}, s, { isValidationPaused }));
 
-  finalForm.subscribe(
-    (x) => {
-      const normalizedState = subscribeOn.reduce((acc, sub) => (isNil(x[sub]) ? { ...acc, [sub]: null } : acc), x);
+  finalForm.subscribe((x) => {
+    const normalizedState = subscribeOn.reduce((acc, sub) => (isNil(x[sub]) ? { ...acc, [sub]: null } : acc), x);
 
-      formStateApi.update(normalizedState as unknown as Omit<State, 'isValidationPaused'>);
-    },
-    subscribeOn.reduce((acc, k) => ({ ...acc, [k]: true }), {}),
-  );
+    formStateApi.update(normalizedState as unknown as Omit<State, 'isValidationPaused'>);
+    // @ts-expect-error
+  }, normalizeSubscriptions(formSubscriptionItems, subscribeOn));
 
   return { $formState, formStateApi };
 };

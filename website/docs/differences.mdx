@@ -17,6 +17,28 @@ List of values:
 - touched
 - visited
 
+## `form` & `field` subscriptions
+
+To subscribe to changes in a form or field, you should pass the `subscribeOn` parameter.
+
+Values not included in `subscribeOn` will be specified in the subscription with the value _false_.
+
+In the _effector-final-form_ you **can not** create many `subscribers` with different `subscriptions`.
+
+```ts
+const { api } = createForm<{ firstName: string }, ['initialValues', 'values']>({
+  onSubmit: onSubmitMock,
+  // highlight-next-line
+  subscribeOn: ['initialValues', 'values'],
+});
+
+api.registerField({
+  name: 'firstName',
+  // highlight-next-line
+  subscribeOn: ['active'],
+});
+```
+
 ## `form.isValidationPaused()`
 
 It is a way to find out if validation currently paused.
@@ -39,7 +61,7 @@ In the _effector-final-form_ you **can not** set a `subscriber`.
 form.registerField('firstName', () => {}, { active: true }, config: { initialValue: 'John' });
 
 // effector-final-form
-api.registerField({name: 'firstName', subscribeOn: [active], config: { initialValue: 'John' } })
+api.registerField({name: 'firstName', subscribeOn: ['active'], config: { initialValue: 'John' } })
 ```
 
 ## `form.getState()`
@@ -89,6 +111,8 @@ const fieldsList = $registeredFields.getState();
 ## `form.subscribe()`
 
 It is a way to ubscribes to changes to the form.
+
+In the _effector-final-form_ you **can not** create many `subscribers` with different `subscriptions`.
 
 ```ts
 const subscriber = () => {};
