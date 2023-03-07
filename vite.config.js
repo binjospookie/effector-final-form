@@ -22,6 +22,7 @@ const config = defineConfig({
     }),
   ],
   test: {
+    typecheck: true,
     globals: true,
     watch: false,
     coverage: {
