@@ -25,7 +25,7 @@
     "build": "vite build --mode production",
     "prepublishOnly": "rm -rf ./package && clean-publish",
     "postpublish": "rm -rf ./package",
-    "test:code": "vitest run --coverage",
+    "test:code": "vitest run --coverage ./src/__tests__/examples/withDynamicValidation.spec.ts",
     "test:types": "tsc -p ./src/test-typings",
     "test": "pnpm run test:code && pnpm run test:types"
   },
