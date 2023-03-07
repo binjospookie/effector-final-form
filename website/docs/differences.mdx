@@ -4,6 +4,20 @@ title: Differences from Final Form
 
 The project has a number of differences in working with the Final Form.
 
+## Not only `form`
+
+In the _Final Form_ you can do most things using `form`.
+
+_effector-final-form_ provides several entities:
+
+```ts
+const { $formState, api, $fields, domain, $registeredFields } = createForm({
+  onSubmit: onSubmitMock,
+  initialValues: { firstName: 'John' },
+  subscribeOn: ['initialValues', 'values'],
+});
+```
+
 ## FormState no undefined values
 
 Values of some _FormState_ properties are forcibly replaced by null to avoid a situation where the derived from `$formState` may contain _undefined_.
