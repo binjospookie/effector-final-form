@@ -30,6 +30,14 @@ import { createForm } from 'effector-final-form';
 
 [Documentation link](https://binjospookie.github.io/effector-final-form/docs/api)
 
+## Differences from Final Form
+
+[Documentation link](https://binjospookie.github.io/effector-final-form/docs/differences)
+
+## Limitations
+
+[Documentation link](https://binjospookie.github.io/effector-final-form/docs/limitations)
+
 ## Base example
 
 ```ts
