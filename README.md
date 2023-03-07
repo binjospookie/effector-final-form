@@ -4,19 +4,24 @@
 
 [Demo](https://stackblitz.com/edit/react-ts-xjh6yd?file=index.tsx)
 
-## Limitations
+Forms values and validation rules are part of the business logic. This means that you need to be able to work with them without being bound to the UI-framework.
 
-- can not achieve scope because of subscribe on form
-- not allowed to create dynamic subscription (only `subscribeOn`)
-- no `form.batching` :c
+The goal of this project is to combine [Final Form](https://final-form.org/) and [Effector](https://effector.dev/) to achieve the goal described above.
 
-## Differences
+## Installation
 
-- `isValidationPaused` is store
-- `registerField` signature
-- `undefined` replaced with `null` in `$formState`
+```bash
+yarn add effector-final-form
+# or
+npm add effector-final-form
+# or
+pnpm add effector-final-form
+```
 
-- no `form.getFieldState`
-- no `form.getRegisteredFields`
-- no `form.getState`
-- no `form.subscribe`
+## Usage
+
+Just import from the root module:
+
+```ts
+import { createForm } from 'effector-final-form';
+```
