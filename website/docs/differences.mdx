@@ -1,0 +1,101 @@
+---
+title: Differences from Final Form
+---
+
+The project has a number of differences in working with the Final Form.
+
+## FormState no undefined values
+
+Values of some _FormState_ properties are forcibly replaced by null to avoid a situation where the derived from `$formState` may contain _undefined_.
+
+List of values:
+
+- active
+- errors
+- modified
+- submitErrors
+- touched
+- visited
+
+## `form.isValidationPaused()`
+
+It is a way to find out if validation currently paused.
+
+```ts
+// Final Form
+form.isValidationPaused(); // boolean
+
+// effector-final-form
+$formState.map((s) => s.isValidationPaused); // Store<boolean>
+```
+
+## `form.registerField()`
+
+In the _Final Form_ it is a way to register a new field and subscribes to changes to it.
+In the _effector-final-form_ you **can not** set a `subscriber`.
+
+```ts
+// Final Form
+form.registerField('firstName', () => {}, { active: true }, config: { initialValue: 'John' });
+
+// effector-final-form
+api.registerField({name: 'firstName', subscribeOn: [active], config: { initialValue: 'John' } })
+```
+
+## `form.getState()`
+
+:::caution You don't need this method!
+`getState()` gives rise to difficult to debug imperative code and kind of race condition. Prefer declarative [sample](https://effector.dev/docs/api/effector/sample) to pass data from store and attach for effects
+:::
+
+It is a way to get the current state of the form without subscribing.
+
+```ts
+// Final Form
+const formState = form.getState();
+
+// effector-final-form
+const formState = $formState.getState();
+```
+
+## `form.getFieldState()`
+
+It is a way to get the state of a specific field.
+
+```ts
+// Final Form
+const firstNameState = form.getFieldState('firstName');
+
+// effector-final-form
+const $firstName = $fields.map((fields) => fields.firstName);
+```
+
+## `form.getRegisteredFields()`
+
+:::caution You don't need this method!
+`getState()` gives rise to difficult to debug imperative code and kind of race condition. Prefer declarative [sample](https://effector.dev/docs/api/effector/sample) to pass data from store and attach for effects
+:::
+
+It is a way to get a list of all the currently registered fields.
+
+```ts
+// Final Form
+const fieldsList = form.getRegisteredFields();
+
+// effector-final-form
+const fieldsList = $registeredFields.getState();
+```
+
+## `form.subscribe()`
+
+It is a way to ubscribes to changes to the form.
+
+```ts
+const subscriber = () => {};
+
+// Final Form
+form.subscribe(subscriber, { active: true });
+
+// effector-final-form
+sample({ clock: $form, target });
+```

@@ -14,7 +14,7 @@ module.exports = {
   themes: ['@docusaurus/theme-live-codeblock'],
   themeConfig: {
     navbar: {
-      title: '☄️ Effector + Final Form 🏁',
+      title: '☄️ effector-final-form 🏁',
       items: [
         {
           href: 'https://stackblitz.com/edit/react-ts-xjh6yd?file=index.tsx',
