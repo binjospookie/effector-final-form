@@ -44,9 +44,6 @@ jobs:
         run: pnpm build
 
       - name: Test code
-        run: pnpm test:code
+        run: pnpm test
         env:
           CI: true
-
-      - name: Test types
-        run: pnpm test:types
