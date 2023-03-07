@@ -1,6 +1,6 @@
 {
   "name": "effector-final-form",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "☄️ Effector bindings for Final Form",
   "license": "MIT",
   "repository": {
@@ -25,7 +25,7 @@
     "build": "vite build --mode production",
     "prepublishOnly": "rm -rf ./package && clean-publish",
     "postpublish": "rm -rf ./package",
-    "test:code": "vitest run --coverage ./src/__tests__/examples/withDynamicValidation.spec.ts",
+    "test:code": "vitest run --coverage",
     "test:types": "tsc -p ./src/test-typings",
     "test": "pnpm run test:code && pnpm run test:types"
   },
