@@ -35,8 +35,7 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
     finalForm.registerField(
       name,
       fieldsApi.update,
-      // @ts-expect-error
-      normalizeSubscriptions(fieldSubscriptionItems, subscribeOn),
+      normalizeSubscriptions(fieldSubscriptionItems, [...subscribeOn, 'active']),
       config,
     );
   };

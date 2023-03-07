@@ -11,7 +11,7 @@ import type { FormSubscription } from './types';
 const baseValidator = () => undefined;
 
 const createForm = <FormValues, T extends FormSubscription>(
-  config: Omit<FFConfig<FormValues>, 'mutators' | 'debug'> & {
+  config: Omit<FFConfig<FormValues>, 'debug'> & {
     subscribeOn: T;
   },
 ) => {
