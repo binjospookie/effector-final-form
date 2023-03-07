@@ -41,7 +41,13 @@ const createForm = <FormValues, T extends FormSubscription>(
     finalForm.mutators.__update();
   }
 
-  return { $formState, api, $fields, $registeredFields, finalForm };
+  const setValidationFn = (fn: Parameters<typeof validationFx.use>[0]) => {
+    validationFx.use(fn);
+    // @ts-expect-error
+    finalForm.mutators.__update();
+  };
+
+  return { $formState, api, $fields, $registeredFields, setValidationFn };
 };
 
 export { createForm };

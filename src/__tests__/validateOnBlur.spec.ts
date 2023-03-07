@@ -4,7 +4,7 @@ import { createForm } from '../index';
 
 const onSubmitMock = () => {};
 
-describe('createForm', () => {
+describe('validateOnBlur', () => {
   test('', async () => {
     const { $formState, api, $fields } = createForm({
       onSubmit: onSubmitMock,

@@ -2,7 +2,7 @@ import waitForExpect from 'wait-for-expect';
 
 import { createForm } from '../index';
 
-describe('createForm', () => {
+describe('formStateNullable', () => {
   test('', async () => {
     const { $formState, api } = createForm({
       onSubmit: () => ({ firstName: 'Submit Error' }),
