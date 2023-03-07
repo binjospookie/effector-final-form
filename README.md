@@ -26,6 +26,10 @@ Just import from the root module:
 import { createForm } from 'effector-final-form';
 ```
 
+## API
+
+[Documentation link](https://binjospookie.github.io/effector-final-form/docs/api)
+
 ## Base example
 
 ```ts
@@ -114,3 +118,7 @@ describe('example', () => {
     }
   });
 ```
+
+## More examples
+
+[Documentation link](https://binjospookie.github.io/effector-final-form/docs/examples)
