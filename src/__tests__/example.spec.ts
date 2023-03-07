@@ -1,6 +1,7 @@
 import { allSettled, fork } from 'effector';
 import { vi } from 'vitest';
 
+// import { createForm } from 'effector-final-form';
 import { createForm } from '../index';
 
 vi.useFakeTimers();
