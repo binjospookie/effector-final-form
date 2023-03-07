@@ -7,13 +7,14 @@ const createFields = <FormValues>(config: { domain: Domain; finalForm: FFFormApi
   const { domain, finalForm } = config;
 
   type Field = NonNullable<ReturnType<(typeof finalForm)['getFieldState']>>;
-  type State = { [T in keyof FormValues]: Field };
+  type FieldName = keyof FormValues;
+  type State = { [T in FieldName]: Field };
 
   const calculateFields = () =>
     finalForm.getRegisteredFields().reduce(
       (acc, name) =>
         Object.assign({}, acc, {
-          [name]: finalForm.getFieldState(name as keyof FormValues),
+          [name]: finalForm.getFieldState(name as FieldName),
         }),
       {} as State,
     );
@@ -23,10 +24,11 @@ const createFields = <FormValues>(config: { domain: Domain; finalForm: FFFormApi
   };
 
   const $fields = domain.store<State>(calculateFields());
+  const $registeredFields = $fields.map((kv) => Object.keys(kv) as FieldName[] | []);
 
   sample({ clock: fieldsApi.update, fn: calculateFields, target: $fields });
 
-  return { $fields, fieldsApi };
+  return { $fields, fieldsApi, $registeredFields };
 };
 
 export { createFields };

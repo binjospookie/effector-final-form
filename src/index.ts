@@ -18,7 +18,7 @@ export const createForm = <FormValues, T extends FormSubscription>(
   const finalForm = ffCreateForm(finalFormConfig);
 
   const domain = createDomain();
-  const { $fields, fieldsApi } = createFields<FormValues>({ domain, finalForm });
+  const { $fields, $registeredFields, fieldsApi } = createFields<FormValues>({ domain, finalForm });
   const { $formState, formStateApi } = createFormState<FormValues, T>({
     domain,
     finalForm,
@@ -27,5 +27,5 @@ export const createForm = <FormValues, T extends FormSubscription>(
 
   const api = createApi<FormValues, T>({ domain, finalForm, fieldsApi, formStateApi });
 
-  return { $formState, api, $fields, domain };
+  return { $formState, api, $fields, domain, $registeredFields };
 };
