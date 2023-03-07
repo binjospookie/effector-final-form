@@ -1,3 +1,5 @@
+import waitForExpect from 'wait-for-expect';
+
 import { createForm } from '../index';
 
 describe('createForm', () => {
@@ -32,14 +34,23 @@ describe('createForm', () => {
 
     {
       await api.changeFx({ name: 'firstName', value: 'Bob' });
-      expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
+      await waitForExpect(() => {
+        expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
+      });
     }
 
     {
       await api.changeFx({ name: 'firstName', value: 'Steve' });
 
+      await waitForExpect(() => {
+        expect($formState.getState().errors).toStrictEqual({});
+      }, 3000);
+
       await api.submitFx();
-      expect($formState.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
+
+      await waitForExpect(() => {
+        expect($formState.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
+      });
     }
   });
 });

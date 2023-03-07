@@ -1,3 +1,5 @@
+import waitForExpect from 'wait-for-expect';
+
 import { createForm } from '../../index';
 
 describe('api.resetFieldState', () => {
@@ -44,37 +46,44 @@ describe('api.resetFieldState', () => {
       await api.focusFx('firstName');
       await api.changeFx({ name: 'firstName', value: ['John'] });
 
-      const { blur, change, data, focus, ...state } = $fields.getState().firstName;
+      await waitForExpect(() => {
+        const { blur, change, data, focus, ...state } = $fields.getState().firstName;
 
-      expect(state).toStrictEqual({
-        active: true,
-        dirty: true,
-        dirtySinceLastSubmit: false,
-        error: 'StaticError',
-        initial: undefined,
-        invalid: true,
-        length: 1,
-        modified: true,
-        modifiedSinceLastSubmit: false,
-        name: 'firstName',
-        pristine: false,
-        submitError: undefined,
-        submitFailed: false,
-        submitSucceeded: false,
-        submitting: false,
-        touched: true,
-        valid: false,
-        validating: false,
-        value: ['John'],
-        visited: true,
+        expect(state).toStrictEqual({
+          active: true,
+          dirty: true,
+          dirtySinceLastSubmit: false,
+          error: 'StaticError',
+          initial: undefined,
+          invalid: true,
+          length: 1,
+          modified: true,
+          modifiedSinceLastSubmit: false,
+          name: 'firstName',
+          pristine: false,
+          submitError: undefined,
+          submitFailed: false,
+          submitSucceeded: false,
+          submitting: false,
+          touched: true,
+          valid: false,
+          validating: false,
+          value: ['John'],
+          visited: true,
+        });
       });
     }
 
     {
       await api.changeFx({ name: 'firstName', value: ['Doe'] });
-      await api.submitFx();
+      await waitForExpect(() => {
+        expect($fields.getState().firstName.value).toStrictEqual(['Doe']);
+      });
 
-      expect($fields.getState().firstName.submitError).toBe('Submit Error');
+      await api.submitFx();
+      await waitForExpect(() => {
+        expect($fields.getState().firstName.submitError).toBe('Submit Error');
+      });
     }
 
     {

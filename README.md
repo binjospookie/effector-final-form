@@ -33,17 +33,17 @@ import { createForm } from 'effector-final-form';
 ## Base example
 
 ```ts
-import { allSettled, fork } from 'effector';
-import { createForm } from 'effector-final-form';
 import { vi } from 'vitest';
+import waitForExpect from 'wait-for-expect';
 
-vi.useFakeTimers();
+// import { createForm } from 'effector-final-form';
+import { createForm } from '../../index';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('example', () => {
   test('', async () => {
-    const { $formState, $fields, domain, api } = createForm({
+    const { $formState, $fields, api } = createForm({
       onSubmit: async (f) => {
         await sleep(1000);
 
@@ -53,44 +53,46 @@ describe('example', () => {
       initialValues: { firstName: '' },
       subscribeOn: ['values', 'errors', 'submitting', 'submitSucceeded', 'submitFailed', 'submitErrors'],
     });
-    const scope = fork(domain);
 
-    await allSettled(api.registerField, {
-      scope,
-      params: {
-        name: 'firstName',
-        subscribeOn: ['value', 'error', 'initial'],
-      },
+    await api.registerField({
+      name: 'firstName',
+      subscribeOn: ['value', 'error', 'initial'],
     });
 
-    {
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: '' } });
-      expect(scope.getState($fields).firstName.error).toBe('Can not be empty');
-      expect(scope.getState($fields).firstName.initial).toBe('');
-      expect(scope.getState($fields).firstName.value).toBe('');
+    api.changeFx({ name: 'firstName', value: '' });
 
-      expect(scope.getState($formState).errors).toStrictEqual({ firstName: 'Can not be empty' });
-      expect(scope.getState($formState).values).toStrictEqual({ firstName: '' });
-      expect(scope.getState($formState).submitting).toBe(false);
-      expect(scope.getState($formState).submitSucceeded).toBe(false);
-      expect(scope.getState($formState).submitFailed).toBe(false);
-      expect(scope.getState($formState).submitErrors).toBe(null);
+    await waitForExpect(() => {
+      expect($fields.getState().firstName.error).toBe('Can not be empty');
+    });
+    expect($fields.getState().firstName.initial).toBe('');
+    expect($fields.getState().firstName.value).toBe('');
+
+    expect($formState.getState().errors).toStrictEqual({ firstName: 'Can not be empty' });
+    expect($formState.getState().values).toStrictEqual({ firstName: '' });
+    expect($formState.getState().submitting).toBe(false);
+    expect($formState.getState().submitSucceeded).toBe(false);
+    expect($formState.getState().submitFailed).toBe(false);
+    expect($formState.getState().submitErrors).toBe(null);
+
+    {
+      await api.changeFx({ name: 'firstName', value: 'Incorrect' });
+
+      await waitForExpect(() => {
+        expect($fields.getState().firstName.error).toBe(undefined);
+        expect($fields.getState().firstName.value).toBe('Incorrect');
+        expect($formState.getState().errors).toStrictEqual({});
+      });
     }
 
     {
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'Incorrect' } });
-      expect(scope.getState($fields).firstName.error).toBe(undefined);
-      expect(scope.getState($fields).firstName.value).toBe('Incorrect');
-      expect(scope.getState($formState).errors).toStrictEqual({});
-    }
+      const submitPromise = api.submitFx();
 
-    {
-      const submitPromise = allSettled(api.submitFx, { scope });
+      expect($formState.getState().submitting).toBe(true);
+
+      vi.useFakeTimers();
       vi.runOnlyPendingTimers();
-
-      expect(scope.getState($formState).submitting).toBe(true);
-
       await submitPromise;
+      vi.useRealTimers();
 
       expect($formState.getState().submitting).toBe(false);
       expect($formState.getState().submitSucceeded).toBe(false);
@@ -99,24 +101,32 @@ describe('example', () => {
     }
 
     {
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'John' } });
-      expect(scope.getState($fields).firstName.error).toBe(undefined);
-      expect(scope.getState($fields).firstName.value).toBe('John');
-      expect(scope.getState($formState).errors).toStrictEqual({});
+      await api.changeFx({ name: 'firstName', value: 'John' });
 
-      const submitPromise = allSettled(api.submitFx, { scope });
+      expect($fields.getState().firstName.error).toBe(undefined);
+      expect($fields.getState().firstName.value).toBe('John');
+      expect($formState.getState().errors).toStrictEqual({});
+
+      const submitPromise = api.submitFx();
+
+      await waitForExpect(() => {
+        expect($formState.getState().submitting).toBe(true);
+      });
+
+      vi.useFakeTimers();
       vi.runOnlyPendingTimers();
-
-      expect(scope.getState($formState).submitting).toBe(true);
-
       await submitPromise;
+      vi.useRealTimers();
 
-      expect($formState.getState().submitting).toBe(false);
+      await waitForExpect(() => {
+        expect($formState.getState().submitting).toBe(false);
+      });
       expect($formState.getState().submitSucceeded).toBe(true);
       expect($formState.getState().submitFailed).toBe(false);
       expect($formState.getState().submitErrors).toBe(null);
     }
   });
+});
 ```
 
 ## More examples

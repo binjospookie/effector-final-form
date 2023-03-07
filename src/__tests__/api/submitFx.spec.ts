@@ -1,8 +1,7 @@
 import { vi } from 'vitest';
+import waitForExpect from 'wait-for-expect';
 
 import { createForm } from '../../index';
-
-vi.useFakeTimers();
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -38,13 +37,19 @@ describe('api.submitFx', () => {
       expect($fields.getState().firstName.modifiedSinceLastSubmit).toBe(false);
 
       const submitPromise = api.submitFx();
+
+      await waitForExpect(() => {
+        expect($formState.getState().submitting).toBe(true);
+      });
+
+      vi.useFakeTimers();
       vi.runOnlyPendingTimers();
-
-      expect($formState.getState().submitting).toBe(true);
-
       await submitPromise;
+      vi.useRealTimers();
 
-      expect($formState.getState().submitting).toBe(false);
+      await waitForExpect(() => {
+        expect($formState.getState().submitting).toBe(false);
+      });
       expect($fields.getState().firstName.submitError).toBe(undefined);
       expect($fields.getState().firstName.submitSucceeded).toBe(true);
       expect($fields.getState().firstName.submitFailed).toBe(false);
@@ -59,13 +64,19 @@ describe('api.submitFx', () => {
       expect($fields.getState().firstName.modifiedSinceLastSubmit).toBe(true);
 
       const submitPromise = api.submitFx();
+
+      await waitForExpect(() => {
+        expect($formState.getState().submitting).toBe(true);
+      });
+
+      vi.useFakeTimers();
       vi.runOnlyPendingTimers();
-
-      expect($formState.getState().submitting).toBe(true);
-
       await submitPromise;
+      vi.useRealTimers();
 
-      expect($formState.getState().submitting).toBe(false);
+      await waitForExpect(() => {
+        expect($formState.getState().submitting).toBe(false);
+      });
       expect($fields.getState().firstName.submitError).toBe('Submit Error');
       expect($fields.getState().firstName.submitSucceeded).toBe(false);
       expect($fields.getState().firstName.submitFailed).toBe(true);

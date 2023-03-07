@@ -1,3 +1,5 @@
+import waitForExpect from 'wait-for-expect';
+
 import { createForm } from '../../index';
 
 const onSubmitMock = () => {};
@@ -20,14 +22,19 @@ describe('api.restart', () => {
       await api.changeFx({ name: 'firstName', value: undefined });
 
       expect($fields.getState().firstName.value).toBe(undefined);
-      expect($formState.getState().errors).toStrictEqual({ firstName: 'error' });
+      await waitForExpect(() => {
+        expect($formState.getState().errors).toStrictEqual({ firstName: 'error' });
+      });
     }
 
     {
       await api.restart();
 
       expect($fields.getState().firstName.value).toBe('');
-      expect($formState.getState().errors).toStrictEqual({});
+
+      await waitForExpect(() => {
+        expect($formState.getState().errors).toStrictEqual({});
+      });
     }
   });
   test('with initialValues', async () => {
@@ -46,14 +53,19 @@ describe('api.restart', () => {
       api.changeFx({ name: 'firstName', value: 'John' });
 
       expect($fields.getState().firstName.value).toBe('John');
-      expect($formState.getState().errors).toStrictEqual({ firstName: 'error' });
+      await waitForExpect(() => {
+        expect($formState.getState().errors).toStrictEqual({ firstName: 'error' });
+      });
     }
 
     {
       await api.restart();
 
       expect($fields.getState().firstName.value).toBe(undefined);
-      expect($formState.getState().errors).toStrictEqual({});
+
+      await waitForExpect(() => {
+        expect($formState.getState().errors).toStrictEqual({});
+      });
     }
   });
 });

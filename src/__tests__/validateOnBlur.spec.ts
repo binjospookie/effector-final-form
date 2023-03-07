@@ -1,3 +1,5 @@
+import waitForExpect from 'wait-for-expect';
+
 import { createForm } from '../index';
 
 const onSubmitMock = () => {};
@@ -28,7 +30,11 @@ describe('createForm', () => {
 
     {
       await api.blurFx('firstName');
-      expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
+
+      await waitForExpect(() => {
+        expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
+      });
+
       expect($fields.getState().firstName.error).toBe('Error');
     }
 
@@ -41,7 +47,9 @@ describe('createForm', () => {
 
     {
       await api.blurFx('firstName');
-      expect($formState.getState().errors).toStrictEqual({});
+      await waitForExpect(() => {
+        expect($formState.getState().errors).toStrictEqual({});
+      });
       expect($fields.getState().firstName.error).toBe(undefined);
     }
   });
