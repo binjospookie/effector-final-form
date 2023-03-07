@@ -1,21 +1,19 @@
-import { sample } from 'effector';
+import { createEffect } from 'effector';
 import { fieldSubscriptionItems } from 'final-form';
 
 import { normalizeSubscriptions } from './utils';
 
-import type { Domain } from 'effector';
 import type { FormApi as FFFormApi } from 'final-form';
 import type { createFields } from './createFields';
 import type { createFormState } from './createFormState';
 import type { FormSubscription } from './types';
 
 const createApi = <FormValues, T extends FormSubscription>(config: {
-  domain: Domain;
   finalForm: FFFormApi<FormValues>;
   fieldsApi: ReturnType<typeof createFields<FormValues>>['fieldsApi'];
   formStateApi: ReturnType<typeof createFormState<FormValues, T>>['formStateApi'];
 }) => {
-  const { domain, finalForm, fieldsApi, formStateApi } = config;
+  const { finalForm, fieldsApi, formStateApi } = config;
 
   type Form = typeof finalForm;
   type FieldNames = keyof FormValues;
@@ -34,8 +32,13 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
     subscribeOn,
     config,
   }: RegisterFieldConfig<T>) => {
-    // @ts-expect-error
-    finalForm.registerField(name, () => {}, normalizeSubscriptions(fieldSubscriptionItems, subscribeOn), config);
+    finalForm.registerField(
+      name,
+      fieldsApi.update,
+      // @ts-expect-error
+      normalizeSubscriptions(fieldSubscriptionItems, subscribeOn),
+      config,
+    );
   };
 
   const pauseValidationHandler = () => {
@@ -48,33 +51,18 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
   };
 
   const api = {
-    blurFx: domain.effect(finalForm.blur),
-    changeFx: domain.effect(changeHandler),
-    focusFx: domain.effect(finalForm.focus),
-    initialize: domain.effect(finalForm.initialize),
-    pauseValidation: domain.effect(pauseValidationHandler),
-    registerField: domain.effect(registerFieldHandler),
-    reset: domain.effect(finalForm.reset),
-    resetFieldState: domain.effect(finalForm.resetFieldState),
-    restart: domain.effect(finalForm.restart),
-    resumeValidation: domain.effect(resumeValidationHandler),
-    submitFx: domain.effect(finalForm.submit),
+    blurFx: createEffect(finalForm.blur),
+    changeFx: createEffect(changeHandler),
+    focusFx: createEffect(finalForm.focus),
+    initialize: createEffect(finalForm.initialize),
+    pauseValidation: createEffect(pauseValidationHandler),
+    registerField: createEffect(registerFieldHandler),
+    reset: createEffect(finalForm.reset),
+    resetFieldState: createEffect(finalForm.resetFieldState),
+    restart: createEffect(finalForm.restart),
+    resumeValidation: createEffect(resumeValidationHandler),
+    submitFx: createEffect(finalForm.submit),
   };
-
-  sample({
-    clock: [
-      api.blurFx.finally,
-      api.changeFx.finally,
-      api.focusFx.finally,
-      api.initialize.finally,
-      api.registerField.finally,
-      api.reset.finally,
-      api.resetFieldState.finally,
-      api.restart.finally,
-      api.submitFx.finally,
-    ],
-    target: fieldsApi.update,
-  });
 
   return api;
 };

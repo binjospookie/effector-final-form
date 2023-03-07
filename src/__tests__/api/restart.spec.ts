@@ -1,12 +1,10 @@
-import { allSettled, fork } from 'effector';
-
 import { createForm } from '../../index';
 
 const onSubmitMock = () => {};
 
 describe('api.restart', () => {
   test('with initialValues', async () => {
-    const { $fields, domain, api, $formState } = createForm({
+    const { $fields, api, $formState } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: '' },
       subscribeOn: ['values', 'initialValues', 'errors'],
@@ -16,28 +14,24 @@ describe('api.restart', () => {
         }
       },
     });
-    const scope = fork(domain);
 
     {
-      await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: [] } });
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: undefined } });
+      api.registerField({ name: 'firstName', subscribeOn: ['value'] });
+      await api.changeFx({ name: 'firstName', value: undefined });
 
-      expect(scope.getState($fields).firstName.value).toBe(undefined);
-      expect(scope.getState($formState).errors).toStrictEqual({ firstName: 'error' });
+      expect($fields.getState().firstName.value).toBe(undefined);
+      expect($formState.getState().errors).toStrictEqual({ firstName: 'error' });
     }
 
     {
-      await allSettled(api.restart, { scope, params: undefined });
+      await api.restart();
 
-      expect(scope.getState($fields).firstName.value).toBe('');
-      expect(scope.getState($formState).errors).toStrictEqual({});
+      expect($fields.getState().firstName.value).toBe('');
+      expect($formState.getState().errors).toStrictEqual({});
     }
   });
   test('with initialValues', async () => {
-    const { $fields, domain, api, $formState } = createForm<
-      { firstName: string },
-      ['values', 'initialValues', 'errors']
-    >({
+    const { $fields, api, $formState } = createForm<{ firstName: string }, ['values', 'initialValues', 'errors']>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'initialValues', 'errors'],
       validate: (f) => {
@@ -46,21 +40,20 @@ describe('api.restart', () => {
         }
       },
     });
-    const scope = fork(domain);
 
     {
-      await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: [] } });
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'John' } });
+      api.registerField({ name: 'firstName', subscribeOn: ['value'] });
+      api.changeFx({ name: 'firstName', value: 'John' });
 
-      expect(scope.getState($fields).firstName.value).toBe('John');
-      expect(scope.getState($formState).errors).toStrictEqual({ firstName: 'error' });
+      expect($fields.getState().firstName.value).toBe('John');
+      expect($formState.getState().errors).toStrictEqual({ firstName: 'error' });
     }
 
     {
-      await allSettled(api.restart, { scope, params: undefined });
+      await api.restart();
 
-      expect(scope.getState($fields).firstName.value).toBe(undefined);
-      expect(scope.getState($formState).errors).toStrictEqual({});
+      expect($fields.getState().firstName.value).toBe(undefined);
+      expect($formState.getState().errors).toStrictEqual({});
     }
   });
 });

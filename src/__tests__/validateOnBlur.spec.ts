@@ -1,12 +1,10 @@
-import { allSettled, fork } from 'effector';
-
 import { createForm } from '../index';
 
 const onSubmitMock = () => {};
 
 describe('createForm', () => {
   test('', async () => {
-    const { $formState, api, domain, $fields } = createForm({
+    const { $formState, api, $fields } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: 'John' },
       subscribeOn: ['values', 'errors'],
@@ -18,37 +16,33 @@ describe('createForm', () => {
       validateOnBlur: true,
     });
 
-    const scope = fork(domain);
-
-    await allSettled(api.registerField, {
-      scope,
-      params: { name: 'firstName', subscribeOn: ['error'] },
-    });
+    await api.registerField({ name: 'firstName', subscribeOn: ['error'] });
 
     {
-      await allSettled(api.focusFx, { scope, params: 'firstName' });
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'Bob' } });
-      expect(scope.getState($formState).errors).toStrictEqual({});
-      expect(scope.getState($fields).firstName.error).toBe(undefined);
+      api.focusFx('firstName');
+      await api.changeFx({ name: 'firstName', value: 'Bob' });
+
+      expect($formState.getState().errors).toStrictEqual({});
+      expect($fields.getState().firstName.error).toBe(undefined);
     }
 
     {
-      await allSettled(api.blurFx, { scope, params: 'firstName' });
-      expect(scope.getState($formState).errors).toStrictEqual({ firstName: 'Error' });
-      expect(scope.getState($fields).firstName.error).toBe('Error');
+      await api.blurFx('firstName');
+      expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
+      expect($fields.getState().firstName.error).toBe('Error');
     }
 
     {
-      await allSettled(api.focusFx, { scope, params: 'firstName' });
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'Steve' } });
-      expect(scope.getState($formState).errors).toStrictEqual({ firstName: 'Error' });
-      expect(scope.getState($fields).firstName.error).toBe('Error');
+      api.focusFx('firstName');
+      await api.changeFx({ name: 'firstName', value: 'Steve' });
+      expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
+      expect($fields.getState().firstName.error).toBe('Error');
     }
 
     {
-      await allSettled(api.blurFx, { scope, params: 'firstName' });
-      expect(scope.getState($formState).errors).toStrictEqual({});
-      expect(scope.getState($fields).firstName.error).toBe(undefined);
+      await api.blurFx('firstName');
+      expect($formState.getState().errors).toStrictEqual({});
+      expect($fields.getState().firstName.error).toBe(undefined);
     }
   });
 });

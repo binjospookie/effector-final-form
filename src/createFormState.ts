@@ -1,7 +1,8 @@
+import { createEvent, createStore } from 'effector';
 import { formSubscriptionItems } from 'final-form';
+
 import { isNil, normalizeSubscriptions, pick } from './utils';
 
-import type { Domain } from 'effector';
 import type {
   FormApi as FFFormApi,
   FormState as FFFormState,
@@ -10,11 +11,10 @@ import type {
 import type { FormSubscription } from './types';
 
 const createFormState = <FormValues, T extends FormSubscription>(config: {
-  domain: Domain;
   finalForm: FFFormApi<FormValues>;
   subscribeOn: T;
 }) => {
-  const { domain, finalForm, subscribeOn } = config;
+  const { finalForm, subscribeOn } = config;
 
   type NormalizedState<K extends keyof FFFormSubscription> = Omit<FFFormState<FormValues>, K> & {
     [k in K]: null | Exclude<FFFormState<FormValues>[k], undefined>;
@@ -33,12 +33,11 @@ const createFormState = <FormValues, T extends FormSubscription>(config: {
   });
 
   const formStateApi = {
-    update: domain.event<Omit<State, 'isValidationPaused'>>(),
-    setValidationPaused: domain.event<boolean>(),
+    update: createEvent<Omit<State, 'isValidationPaused'>>(),
+    setValidationPaused: createEvent<boolean>(),
   };
 
-  const $formState = domain
-    .store<State>(initialState)
+  const $formState = createStore<State>(initialState)
     .on(formStateApi.update, (s, p) => Object.assign({}, s, p))
     .on(formStateApi.setValidationPaused, (s, isValidationPaused) => Object.assign({}, s, { isValidationPaused }));
 

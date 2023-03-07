@@ -1,24 +1,18 @@
-import { allSettled, fork } from 'effector';
-
 import { createForm } from '../index';
 
 const onSubmitMock = () => {};
 
 describe('api.registerField', () => {
   test('without initialValues', async () => {
-    const { domain, api, $registeredFields } = createForm<{ firstName: string }, ['values']>({
+    const { api, $registeredFields } = createForm<{ firstName: string }, ['values']>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values'],
     });
-    const scope = fork(domain);
 
-    expect(scope.getState($registeredFields)).toStrictEqual([]);
+    expect($registeredFields.getState()).toStrictEqual([]);
 
-    await allSettled(api.registerField, {
-      scope,
-      params: { name: 'firstName', subscribeOn: ['value'], config: { defaultValue: 'defaultValue' } },
-    });
-    expect(scope.getState($registeredFields)).toStrictEqual(['firstName']);
+    api.registerField({ name: 'firstName', subscribeOn: ['value'], config: { defaultValue: 'defaultValue' } });
+    expect($registeredFields.getState()).toStrictEqual(['firstName']);
   });
 
   test('with initialValues', async () => {
@@ -27,10 +21,9 @@ describe('api.registerField', () => {
       initialValues: { firstName: '' },
       subscribeOn: ['values'],
     });
-    const scope = fork(domain);
 
-    expect(scope.getState($registeredFields)).toStrictEqual([]);
-    await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: ['value'] } });
-    expect(scope.getState($registeredFields)).toStrictEqual(['firstName']);
+    expect($registeredFields.getState()).toStrictEqual([]);
+    api.registerField({ name: 'firstName', subscribeOn: ['value'] });
+    expect($registeredFields.getState()).toStrictEqual(['firstName']);
   });
 });

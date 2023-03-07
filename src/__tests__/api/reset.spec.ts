@@ -1,82 +1,78 @@
-import { allSettled, fork } from 'effector';
-
 import { createForm } from '../../index';
 
 const onSubmitMock = () => {};
 
 describe('api.reset', () => {
   test('without initialValues', async () => {
-    const { $fields, domain, api } = createForm<{ firstName: string; lastName: string }, ['values', 'initialValues']>({
+    const { $fields, api } = createForm<{ firstName: string; lastName: string }, ['values', 'initialValues']>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'initialValues'],
     });
-    const scope = fork(domain);
 
     {
-      await allSettled(api.initialize, { scope, params: { firstName: 'John', lastName: 'Doe' } });
-      await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: ['initial'] } });
-      await allSettled(api.registerField, { scope, params: { name: 'lastName', subscribeOn: ['initial'] } });
+      await api.initialize({ firstName: 'John', lastName: 'Doe' });
+      api.registerField({ name: 'firstName', subscribeOn: ['initial', 'value'] });
+      api.registerField({ name: 'lastName', subscribeOn: ['initial', 'value'] });
 
-      expect(scope.getState($fields).firstName.initial).toBe('John');
-      expect(scope.getState($fields).lastName.initial).toBe('Doe');
+      expect($fields.getState().firstName.initial).toBe('John');
+      expect($fields.getState().lastName.initial).toBe('Doe');
     }
 
     {
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'Bill' } });
-      await allSettled(api.changeFx, { scope, params: { name: 'lastName', value: 'Smith' } });
+      await api.changeFx({ name: 'firstName', value: 'Bill' });
+      await api.changeFx({ name: 'lastName', value: 'Smith' });
 
-      expect(scope.getState($fields).firstName.value).toBe('Bill');
-      expect(scope.getState($fields).lastName.value).toBe('Smith');
+      expect($fields.getState().firstName.value).toBe('Bill');
+      expect($fields.getState().lastName.value).toBe('Smith');
     }
 
     {
-      await allSettled(api.reset, { scope, params: { firstName: 'biba', lastName: 'boba' } });
+      await api.reset({ firstName: 'biba', lastName: 'boba' });
 
-      expect(scope.getState($fields).firstName.value).toBe('biba');
-      expect(scope.getState($fields).lastName.value).toBe('boba');
+      expect($fields.getState().firstName.value).toBe('biba');
+      expect($fields.getState().lastName.value).toBe('boba');
     }
 
     {
-      await allSettled(api.reset, { scope, params: { firstName: undefined, lastName: undefined } });
-      expect(scope.getState($fields).firstName.value).toBe(undefined);
-      expect(scope.getState($fields).lastName.value).toBe(undefined);
+      await api.reset({ firstName: undefined, lastName: undefined });
+      expect($fields.getState().firstName.value).toBe(undefined);
+      expect($fields.getState().lastName.value).toBe(undefined);
     }
 
     {
-      await allSettled(api.reset, { scope, params: { firstName: 'John' } });
-      expect(scope.getState($fields).firstName.value).toBe('John');
-      expect(scope.getState($fields).lastName.value).toBe(undefined);
+      await api.reset({ firstName: 'John' });
+      expect($fields.getState().firstName.value).toBe('John');
+      expect($fields.getState().lastName.value).toBe(undefined);
     }
   });
 
   test('with initialValues', async () => {
-    const { $fields, domain, api } = createForm({
+    const { $fields, api } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: 'John', lastName: 'Doe' },
       subscribeOn: ['values', 'initialValues'],
     });
-    const scope = fork(domain);
 
     {
-      await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: ['initial'] } });
-      await allSettled(api.registerField, { scope, params: { name: 'lastName', subscribeOn: ['initial'] } });
+      api.registerField({ name: 'firstName', subscribeOn: ['initial', 'value'] });
+      api.registerField({ name: 'lastName', subscribeOn: ['initial', 'value'] });
 
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'Bill' } });
-      await allSettled(api.changeFx, { scope, params: { name: 'lastName', value: 'Smith' } });
+      await api.changeFx({ name: 'firstName', value: 'Bill' });
+      await api.changeFx({ name: 'lastName', value: 'Smith' });
 
-      expect(scope.getState($fields).firstName.initial).toBe('John');
-      expect(scope.getState($fields).firstName.value).toBe('Bill');
-      expect(scope.getState($fields).lastName.initial).toBe('Doe');
-      expect(scope.getState($fields).lastName.value).toBe('Smith');
+      expect($fields.getState().firstName.initial).toBe('John');
+      expect($fields.getState().firstName.value).toBe('Bill');
+      expect($fields.getState().lastName.initial).toBe('Doe');
+      expect($fields.getState().lastName.value).toBe('Smith');
     }
 
     {
-      await allSettled(api.reset, { scope, params: undefined });
+      await api.reset();
 
-      expect(scope.getState($fields).firstName.initial).toBe('John');
-      expect(scope.getState($fields).firstName.value).toBe('John');
-      expect(scope.getState($fields).lastName.initial).toBe('Doe');
-      expect(scope.getState($fields).lastName.value).toBe('Doe');
+      expect($fields.getState().firstName.initial).toBe('John');
+      expect($fields.getState().firstName.value).toBe('John');
+      expect($fields.getState().lastName.initial).toBe('Doe');
+      expect($fields.getState().lastName.value).toBe('Doe');
     }
   });
 });

@@ -1,46 +1,42 @@
-import { allSettled, fork } from 'effector';
-
 import { createForm } from '../../index';
 
 const onSubmitMock = () => {};
 
 describe('api.initialize', () => {
   test('without initialValues', async () => {
-    const { $formState, $fields, domain, api } = createForm<{ firstName: string }, ['values', 'initialValues']>({
+    const { $formState, $fields, api } = createForm<{ firstName: string }, ['values', 'initialValues']>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'initialValues'],
     });
-    const scope = fork(domain);
 
     {
-      await allSettled(api.initialize, { scope, params: { firstName: 'John' } });
-      expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+      api.initialize({ firstName: 'John' });
+      expect($formState.getState().initialValues).toStrictEqual({ firstName: 'John' });
     }
 
     {
-      await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: [] } });
-      expect(scope.getState($fields).firstName.initial).toStrictEqual('John');
-      expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+      api.registerField({ name: 'firstName', subscribeOn: ['initial'] });
+      expect($fields.getState().firstName.initial).toStrictEqual('John');
+      expect($formState.getState().initialValues).toStrictEqual({ firstName: 'John' });
     }
   });
 
   test('with initialValues', async () => {
-    const { $formState, $fields, domain, api } = createForm({
+    const { $formState, $fields, api } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: 'Doe' },
       subscribeOn: ['values', 'initialValues'],
     });
-    const scope = fork(domain);
 
     {
-      await allSettled(api.initialize, { scope, params: { firstName: 'John' } });
-      expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+      api.initialize({ firstName: 'John' });
+      expect($formState.getState().initialValues).toStrictEqual({ firstName: 'John' });
     }
 
     {
-      await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: [] } });
-      expect(scope.getState($fields).firstName.initial).toStrictEqual('John');
-      expect(scope.getState($formState).initialValues).toStrictEqual({ firstName: 'John' });
+      api.registerField({ name: 'firstName', subscribeOn: ['initial'] });
+      expect($fields.getState().firstName.initial).toStrictEqual('John');
+      expect($formState.getState().initialValues).toStrictEqual({ firstName: 'John' });
     }
   });
 });

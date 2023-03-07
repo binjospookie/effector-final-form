@@ -1,49 +1,45 @@
-import { allSettled, fork } from 'effector';
-
 import { createForm } from '../index';
 
 describe('createForm', () => {
   test('', async () => {
-    const { $formState, api, domain } = createForm({
+    const { $formState, api } = createForm({
       onSubmit: () => ({ firstName: 'Submit Error' }),
       initialValues: { firstName: 'John' },
       subscribeOn: ['active', 'errors', 'modified', 'submitErrors', 'touched', 'visited'],
       validate: (f) => (f.firstName === 'Bob' ? { firstName: 'Error' } : undefined),
     });
 
-    const scope = fork(domain);
-
     {
-      expect(scope.getState($formState).active).toBe(null);
-      expect(scope.getState($formState).errors).toStrictEqual({});
-      expect(scope.getState($formState).modified).toStrictEqual({});
-      expect(scope.getState($formState).submitErrors).toBe(null);
-      expect(scope.getState($formState).touched).toStrictEqual({});
-      expect(scope.getState($formState).visited).toStrictEqual({});
+      expect($formState.getState().active).toBe(null);
+      expect($formState.getState().errors).toStrictEqual({});
+      expect($formState.getState().modified).toStrictEqual({});
+      expect($formState.getState().submitErrors).toBe(null);
+      expect($formState.getState().touched).toStrictEqual({});
+      expect($formState.getState().visited).toStrictEqual({});
     }
 
     {
-      await allSettled(api.registerField, { scope, params: { name: 'firstName', subscribeOn: [] } });
-      await allSettled(api.focusFx, { scope, params: 'firstName' });
+      await api.registerField({ name: 'firstName', subscribeOn: [] });
+      await api.focusFx('firstName');
 
-      expect(scope.getState($formState).active).toBe('firstName');
-      expect(scope.getState($formState).errors).toStrictEqual({});
-      expect(scope.getState($formState).modified).toStrictEqual({ firstName: false });
-      expect(scope.getState($formState).submitErrors).toBe(null);
-      expect(scope.getState($formState).touched).toStrictEqual({ firstName: false });
-      expect(scope.getState($formState).visited).toStrictEqual({ firstName: true });
+      expect($formState.getState().active).toBe('firstName');
+      expect($formState.getState().errors).toStrictEqual({});
+      expect($formState.getState().modified).toStrictEqual({ firstName: false });
+      expect($formState.getState().submitErrors).toBe(null);
+      expect($formState.getState().touched).toStrictEqual({ firstName: false });
+      expect($formState.getState().visited).toStrictEqual({ firstName: true });
     }
 
     {
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'Bob' } });
-      expect(scope.getState($formState).errors).toStrictEqual({ firstName: 'Error' });
+      await api.changeFx({ name: 'firstName', value: 'Bob' });
+      expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
     }
 
     {
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: 'Steve' } });
+      await api.changeFx({ name: 'firstName', value: 'Steve' });
 
-      await allSettled(api.submitFx, { scope, params: undefined });
-      expect(scope.getState($formState).submitErrors).toStrictEqual({ firstName: 'Submit Error' });
+      await api.submitFx();
+      expect($formState.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
     }
   });
 });

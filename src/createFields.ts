@@ -1,32 +1,28 @@
-import { sample } from 'effector';
+import { createEvent, createStore, sample } from 'effector';
 
-import type { Domain } from 'effector';
-import type { FormApi as FFFormApi } from 'final-form';
+import type { FieldState as FFFieldState, FormApi as FFFormApi } from 'final-form';
 
-const createFields = <FormValues>(config: { domain: Domain; finalForm: FFFormApi<FormValues> }) => {
-  const { domain, finalForm } = config;
+const createFields = <FormValues>(config: { finalForm: FFFormApi<FormValues> }) => {
+  const { finalForm } = config;
 
   type Field = NonNullable<ReturnType<(typeof finalForm)['getFieldState']>>;
   type FieldName = keyof FormValues;
   type State = { [T in FieldName]: Field };
 
-  const calculateFields = () =>
-    finalForm.getRegisteredFields().reduce(
-      (acc, name) =>
-        Object.assign({}, acc, {
-          [name]: finalForm.getFieldState(name as FieldName),
-        }),
-      {} as State,
-    );
-
   const fieldsApi = {
-    update: domain.event(),
+    update: createEvent<FFFieldState<FormValues[keyof FormValues]>>(),
   };
 
-  const $fields = domain.store<State>(calculateFields());
+  // @ts-expect-error
+  const $fields = createStore<State>({});
   const $registeredFields = $fields.map((kv) => Object.keys(kv) as FieldName[] | []);
 
-  sample({ clock: fieldsApi.update, fn: calculateFields, target: $fields });
+  sample({
+    clock: fieldsApi.update,
+    source: $fields,
+    fn: (src, x) => ({ ...src, [x.name]: x }),
+    target: $fields,
+  });
 
   return { $fields, fieldsApi, $registeredFields };
 };

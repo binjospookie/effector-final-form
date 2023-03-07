@@ -1,19 +1,15 @@
-import { fork } from 'effector';
-
 import { createForm } from '../index';
 
 const onSubmitMock = () => {};
 
 describe('createForm', () => {
   test('without initial values', () => {
-    const { $formState, domain } = createForm<{ firstName: string }, ['initialValues', 'values']>({
+    const { $formState } = createForm<{ firstName: string }, ['initialValues', 'values']>({
       onSubmit: onSubmitMock,
       subscribeOn: ['initialValues', 'values'],
     });
 
-    const scope = fork(domain);
-
-    expect(scope.getState($formState)).toStrictEqual({
+    expect($formState.getState()).toStrictEqual({
       initialValues: null,
       isValidationPaused: false,
       values: {},
@@ -21,15 +17,13 @@ describe('createForm', () => {
   });
 
   test('with initial values', () => {
-    const { $formState, domain } = createForm({
+    const { $formState } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: 'John' },
       subscribeOn: ['initialValues', 'values'],
     });
 
-    const scope = fork(domain);
-
-    expect(scope.getState($formState)).toStrictEqual({
+    expect($formState.getState()).toStrictEqual({
       initialValues: { firstName: 'John' },
       isValidationPaused: false,
       values: { firstName: 'John' },

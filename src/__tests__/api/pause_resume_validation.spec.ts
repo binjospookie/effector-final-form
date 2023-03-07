@@ -1,27 +1,24 @@
-import { allSettled, fork } from 'effector';
-
 import { createForm } from '../../index';
 
 const onSubmitMock = () => {};
 
 describe('api.pause_resume_validation', () => {
-  const { $formState, domain, api } = createForm({
+  const { $formState, api } = createForm({
     onSubmit: onSubmitMock,
     subscribeOn: [],
   });
-  const scope = fork(domain);
 
   test('api.pauseValidation', async () => {
-    expect(scope.getState($formState).isValidationPaused).toBe(false);
+    expect($formState.getState().isValidationPaused).toBe(false);
 
-    await allSettled(api.pauseValidation, { scope });
-    expect(scope.getState($formState).isValidationPaused).toBe(true);
+    api.pauseValidation();
+    expect($formState.getState().isValidationPaused).toBe(true);
   });
 
   test('api.resumeValidation', async () => {
-    expect(scope.getState($formState).isValidationPaused).toBe(true);
+    expect($formState.getState().isValidationPaused).toBe(true);
 
-    await allSettled(api.resumeValidation, { scope });
-    expect(scope.getState($formState).isValidationPaused).toBe(false);
+    api.resumeValidation();
+    expect($formState.getState().isValidationPaused).toBe(false);
   });
 });

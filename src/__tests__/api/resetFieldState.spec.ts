@@ -1,10 +1,8 @@
-import { allSettled, fork } from 'effector';
-
 import { createForm } from '../../index';
 
 describe('api.resetFieldState', () => {
   test('', async () => {
-    const { $fields, domain, api } = createForm<{ firstName: [string] }, ['values']>({
+    const { $fields, api } = createForm<{ firstName: [string] }, ['values']>({
       onSubmit: () => ({ firstName: 'Submit Error' }),
       subscribeOn: ['values'],
       validate: (f) => {
@@ -13,21 +11,40 @@ describe('api.resetFieldState', () => {
         }
       },
     });
-    const scope = fork(domain);
 
     {
-      await allSettled(api.registerField, {
-        scope,
-        params: { name: 'firstName', subscribeOn: ['submitError'] },
+      api.registerField({
+        name: 'firstName',
+        subscribeOn: [
+          'submitError',
+          'active',
+          'dirty',
+          'dirtySinceLastSubmit',
+          'error',
+          'initial',
+          'invalid',
+          'length',
+          'modified',
+          'modifiedSinceLastSubmit',
+          'pristine',
+          'submitFailed',
+          'submitSucceeded',
+          'submitting',
+          'touched',
+          'valid',
+          'validating',
+          'value',
+          'visited',
+        ],
       });
 
-      await allSettled(api.focusFx, { scope, params: 'firstName' });
+      await api.focusFx('firstName');
 
-      await allSettled(api.blurFx, { scope, params: 'firstName' });
-      await allSettled(api.focusFx, { scope, params: 'firstName' });
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: ['John'] } });
+      await api.blurFx('firstName');
+      await api.focusFx('firstName');
+      await api.changeFx({ name: 'firstName', value: ['John'] });
 
-      const { blur, change, data, focus, ...state } = scope.getState($fields).firstName;
+      const { blur, change, data, focus, ...state } = $fields.getState().firstName;
 
       expect(state).toStrictEqual({
         active: true,
@@ -54,23 +71,23 @@ describe('api.resetFieldState', () => {
     }
 
     {
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: ['Doe'] } });
-      await allSettled(api.submitFx, { scope });
+      await api.changeFx({ name: 'firstName', value: ['Doe'] });
+      await api.submitFx();
 
-      expect(scope.getState($fields).firstName.submitError).toBe('Submit Error');
+      expect($fields.getState().firstName.submitError).toBe('Submit Error');
     }
 
     {
-      await allSettled(api.changeFx, { scope, params: { name: 'firstName', value: [''] } });
+      await api.changeFx({ name: 'firstName', value: [''] });
 
-      expect(scope.getState($fields).firstName.modifiedSinceLastSubmit).toBe(true);
-      expect(scope.getState($fields).firstName.dirtySinceLastSubmit).toBe(true);
+      expect($fields.getState().firstName.modifiedSinceLastSubmit).toBe(true);
+      expect($fields.getState().firstName.dirtySinceLastSubmit).toBe(true);
     }
 
     {
-      await allSettled(api.resetFieldState, { scope, params: 'firstName' });
+      api.resetFieldState('firstName');
 
-      const { blur, change, data, focus, ...state } = scope.getState($fields).firstName;
+      const { blur, change, data, focus, ...state } = $fields.getState().firstName;
 
       expect(state).toStrictEqual({
         active: false,
