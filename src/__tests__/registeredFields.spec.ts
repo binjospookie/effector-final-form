@@ -16,7 +16,7 @@ describe('api.registerField', () => {
   });
 
   test('with initialValues', async () => {
-    const { $registeredFields, domain, api } = createForm({
+    const { $registeredFields, api } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: '' },
       subscribeOn: ['values'],

@@ -11,7 +11,7 @@ In the _Final Form_ you can do most things using `form`.
 _effector-final-form_ provides several entities:
 
 ```ts
-const { $formState, api, $fields, domain, $registeredFields } = createForm({
+const { $formState, api, $fields, $registeredFields } = createForm({
   onSubmit: onSubmitMock,
   initialValues: { firstName: 'John' },
   subscribeOn: ['initialValues', 'values'],
