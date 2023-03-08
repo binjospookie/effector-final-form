@@ -6,7 +6,7 @@
 
 Forms values and validation rules are part of the business logic. This means that you need to be able to work with them without being bound to the UI-framework.
 
-The goal of this project is to combine [Final Form](https://final-form.org/) and [Effector](https://effector.dev/) to achieve the goal described above.
+The goal of this project is to combine [Final Form](https://final-form.org/) and [Effector](https://effector.dev/) to achieve the above.
 
 ## Installation
 
