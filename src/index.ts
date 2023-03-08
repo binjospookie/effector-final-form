@@ -35,11 +35,8 @@ const createForm = <FormValues, T extends FormSubscription>(
   const api = createApi<FormValues, T>({ finalForm, fieldsApi, formStateApi });
 
   // because we need an error in field on start (like in form state)
-  // except validateOnBlur = true
-  if (!finalFormConfig.validateOnBlur) {
-    // @ts-expect-error
-    finalForm.mutators.__update();
-  }
+  // @ts-expect-error
+  finalForm.mutators.__update();
 
   const setValidationFn = (fn: Parameters<typeof validationFx.use>[0]) => {
     validationFx.use(fn);
