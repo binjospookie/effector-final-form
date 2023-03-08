@@ -35,7 +35,7 @@ const createForm = <FormValues, T extends FormSubscription>(
     },
   });
 
-  const reValidateFx = createEffect(() => {
+  const revalidateFx = createEffect(() => {
     // @ts-expect-error
     finalForm.mutators.__update__();
   });
@@ -49,11 +49,11 @@ const createForm = <FormValues, T extends FormSubscription>(
   const baseApi = createApi<FormValues, T>({ finalForm, fieldsApi, formStateApi });
 
   // we need an error in field on start (like in form state)
-  reValidateFx();
+  revalidateFx();
 
   const setValidationFn = (fn: Parameters<typeof validateFx.use>[0]) => {
     validateFx.use(fn);
-    reValidateFx();
+    revalidateFx();
   };
 
   const setSubmitFn = (fn: Parameters<typeof submitFx.use>[0]) => {
@@ -63,9 +63,9 @@ const createForm = <FormValues, T extends FormSubscription>(
   return {
     api: {
       ...baseApi,
-      reValidateFx,
-      setValidationFn,
+      revalidateFx,
       setSubmitFn,
+      setValidationFn,
     },
     $fields,
     $formState,
