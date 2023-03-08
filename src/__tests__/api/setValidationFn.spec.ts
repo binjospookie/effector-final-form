@@ -4,9 +4,9 @@ import { createForm } from '../../index';
 
 const onSubmitMock = () => {};
 
-describe('setValidationFn', () => {
+describe('api.setValidationFn', () => {
   test('', async () => {
-    const { $formState, api, $fields, setValidationFn } = createForm({
+    const { $formState, api, $fields } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: 'John' },
       subscribeOn: ['values', 'errors'],
@@ -30,7 +30,7 @@ describe('setValidationFn', () => {
     }
 
     {
-      setValidationFn(() => ({ firstName: 'New validation error' }));
+      api.setValidationFn(() => ({ firstName: 'New validation error' }));
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'New validation error' });

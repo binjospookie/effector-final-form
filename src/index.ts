@@ -22,8 +22,13 @@ const createForm = <FormValues, T extends FormSubscription>(
     ...finalFormConfig,
     validate: validationFx,
     mutators: {
-      __update: () => {},
+      __update__: () => {},
     },
+  });
+
+  const validateFx = createEffect(() => {
+    // @ts-expect-error
+    finalForm.mutators.__update__();
   });
 
   const { $fields, $registeredFields, fieldsApi } = createFields<FormValues>({ finalForm });
@@ -34,17 +39,24 @@ const createForm = <FormValues, T extends FormSubscription>(
 
   const api = createApi<FormValues, T>({ finalForm, fieldsApi, formStateApi });
 
-  // because we need an error in field on start (like in form state)
-  // @ts-expect-error
-  finalForm.mutators.__update();
+  // we need an error in field on start (like in form state)
+  validateFx();
 
   const setValidationFn = (fn: Parameters<typeof validationFx.use>[0]) => {
     validationFx.use(fn);
-    // @ts-expect-error
-    finalForm.mutators.__update();
+    validateFx();
   };
 
-  return { $formState, api, $fields, $registeredFields, setValidationFn };
+  return {
+    $formState,
+    api: {
+      ...api,
+      validateFx,
+      setValidationFn,
+    },
+    $fields,
+    $registeredFields,
+  };
 };
 
 export { createForm };
