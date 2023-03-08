@@ -1,5 +1,5 @@
 module.exports = {
-  title: '☄️ effector final form',
+  title: '☄️ effector final form 🏁',
   url: 'https://binjospookie.github.io/',
   baseUrl: '/effector-final-form/',
   onBrokenLinks: 'warn',
