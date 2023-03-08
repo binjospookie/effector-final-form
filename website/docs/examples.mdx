@@ -10,6 +10,51 @@ title: Examples
 
 ## With dynamic validation
 
+```ts
+const changeError = createEvent<string>();
+// highlight-next-line
+const $error = createStore<string>('error');
+const validationFx = attach({
+  effect: createEffect(({ fields, errorText }) => {
+    if (!fields?.firstName || fields.firstName === '') {
+      return { firstName: errorText };
+    }
+  }),
+  source: $error,
+  mapParams: (fields, errorText) => ({ fields, errorText }),
+});
+
+sample({ clock: changeError, target: $error });
+
+const { $formState, api, $fields } = createForm({
+  onSubmit: () => {},
+  // highlight-next-line
+  // validate: validationFx, // it is possible to setup dynamic validator in cofig
+  initialValues: { firstName: '', lastName: '' },
+  subscribeOn: ['errors'],
+});
+
+api.registerField({ name: 'firstName', subscribeOn: ['error'] });
+api.registerField({ name: 'lastName', subscribeOn: ['error'] });
+
+// highlight-next-line
+sample({ clock: changeError, target: api.reValidateFx });
+
+// highlight-next-line
+api.setValidationFn(validationFx);
+// formState.errors = { firstName: 'error' }
+// firstName.error = 'error'
+// lastName.error = undefined
+
+// highlight-next-line
+changeError('Can not be empty');
+// formState.errors = { firstName: 'Can not be empty' }
+// firstName.error = 'Can not be empty'
+// lastName.error = undefined
+```
+
+[Try it](https://stackblitz.com/edit/react-ts-r8fy3e?file=index.tsx)
+
 ## With React
 
 [Example based on Final Form React demo](https://stackblitz.com/edit/react-ts-xjh6yd?file=index.tsx)
