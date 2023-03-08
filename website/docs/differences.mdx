@@ -1,5 +1,6 @@
 ---
 title: Differences from Final Form
+sidebar_position: 1
 ---
 
 The project has a number of differences in working with the Final Form.
@@ -18,7 +19,7 @@ const { $formState, api, $fields, $registeredFields } = createForm({
 });
 ```
 
-## FormState no undefined values
+## $formState no `undefined` values
 
 Values of some _FormState_ properties are forcibly replaced by null to avoid a situation where the derived from `$formState` may contain _undefined_.
 
@@ -31,11 +32,52 @@ List of values:
 - touched
 - visited
 
+## `api.reValidateFx`
+
+Not presented in Final Form.
+
+Triggers form revalidation. can be useful when the form validation function depends on dynamic parameters (e.g. store value)
+
+```ts
+const setError = createEvent<string>();
+const $error = createStore<string>('');
+
+sample({ clock: setError, target: $error });
+// highlight-next-line
+sample({ clock: setError, target: api.reValidateFx });
+
+const validationFx = attach(() => {
+  effect: ({ fields, error }) => {
+    if (fields.firstName.length <= 2) {
+      return { firstName: error }
+    }
+  },
+  source: $error,
+  mapParams: (fields, error) => ({ fields, error })
+})
+
+setError('Incorrect value');
+```
+
+## `api.setValidationFn`
+
+Not presented in Final Form.
+
+Allows you to dynamically set validation function. Uses `effect.use` under the hood.
+
+## `api.setSubmitFn`
+
+Not presented in Final Form.
+
+Allows you to dynamically set submit function. Uses `effect.use` under the hood.
+
 ## `form` & `field` subscriptions
 
 To subscribe to changes in a form or field, you should pass the `subscribeOn` parameter.
 
 Values not included in `subscribeOn` will be specified in the subscription with the value _false_.
+
+> Except `values` of fields.
 
 In the _effector-final-form_ you **can not** create many `subscribers` with different `subscriptions`.
 
@@ -135,5 +177,5 @@ const subscriber = () => {};
 form.subscribe(subscriber, { active: true });
 
 // effector-final-form
-sample({ clock: $form, target });
+sample({ clock: $formState, target });
 ```

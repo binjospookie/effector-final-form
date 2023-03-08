@@ -46,7 +46,7 @@ const createForm = <FormValues, T extends FormSubscription>(
     subscribeOn,
   });
 
-  const api = createApi<FormValues, T>({ finalForm, fieldsApi, formStateApi });
+  const baseApi = createApi<FormValues, T>({ finalForm, fieldsApi, formStateApi });
 
   // we need an error in field on start (like in form state)
   reValidateFx();
@@ -61,14 +61,14 @@ const createForm = <FormValues, T extends FormSubscription>(
   };
 
   return {
-    $formState,
     api: {
-      ...api,
+      ...baseApi,
       reValidateFx,
       setValidationFn,
       setSubmitFn,
     },
     $fields,
+    $formState,
     $registeredFields,
   };
 };
