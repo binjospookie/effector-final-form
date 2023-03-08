@@ -12,7 +12,7 @@ const config = defineConfig({
     rollupOptions: {
       external: ['effector', 'final-form'],
     },
-    chunkSizeWarningLimit: 3,
+    chunkSizeWarningLimit: 4,
   },
   plugins: [
     dts({
