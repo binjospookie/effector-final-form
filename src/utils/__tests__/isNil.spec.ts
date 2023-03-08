@@ -1,4 +1,4 @@
-import { isNil } from '../utils';
+import { isNil } from '../index';
 
 test('isNil', () => {
   expect(isNil(null)).toBeTruthy();

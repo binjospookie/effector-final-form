@@ -1,7 +1,7 @@
 import { createEvent, createStore } from 'effector';
 import { formSubscriptionItems } from 'final-form';
 
-import { isNil, normalizeSubscriptions, pick } from './utils';
+import { isNil, normalizeSubscriptions, pick, notEquals } from './utils';
 
 import type {
   FormApi as FFFormApi,
@@ -37,7 +37,9 @@ const createFormState = <FormValues, T extends FormSubscription>(config: {
     setValidationPaused: createEvent<boolean>(),
   };
 
-  const $formState = createStore<State>(initialState)
+  const $formState = createStore<State>(initialState, {
+    updateFilter: notEquals,
+  })
     .on(formStateApi.update, (s, p) => Object.assign({}, s, p))
     .on(formStateApi.setValidationPaused, (s, isValidationPaused) => Object.assign({}, s, { isValidationPaused }));
 

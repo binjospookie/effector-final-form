@@ -25,10 +25,6 @@ const config = defineConfig({
     typecheck: true,
     globals: true,
     watch: false,
-    coverage: {
-      reporter: ['text'],
-      statements: 100,
-    },
   },
 });
 

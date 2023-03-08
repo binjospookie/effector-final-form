@@ -1,4 +1,4 @@
-import { pick } from '../utils';
+import { pick } from '../index';
 
 const obj = {
   a: 1,

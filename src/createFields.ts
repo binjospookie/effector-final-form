@@ -1,5 +1,7 @@
 import { createEvent, createStore, sample } from 'effector';
 
+import { notEquals } from './utils';
+
 import type { FieldState as FFFieldState, FormApi as FFFormApi } from 'final-form';
 
 const createFields = <FormValues>(config: { finalForm: FFFormApi<FormValues> }) => {
@@ -13,8 +15,11 @@ const createFields = <FormValues>(config: { finalForm: FFFormApi<FormValues> }) 
     update: createEvent<FFFieldState<FormValues[keyof FormValues]>>(),
   };
 
-  // @ts-expect-error
-  const $fields = createStore<State>({});
+  const $fields = createStore<State>(
+    // @ts-expect-error
+    {},
+    { updateFilter: notEquals },
+  );
   const $registeredFields = $fields.map((kv) => Object.keys(kv) as FieldName[] | []);
 
   sample({

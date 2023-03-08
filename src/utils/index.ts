@@ -1,4 +1,5 @@
-import { Pick, Nil } from './types';
+import { Pick, Nil } from '../types';
+import { equals } from './equals';
 
 const isNil = <T>(x: T | Nil): x is Nil => x === null || x === undefined;
 
@@ -14,4 +15,6 @@ const pick = <K extends string, T extends Record<string, any>>(propsToPick: K[],
 const normalizeSubscriptions = <T extends readonly string[]>(a: T, b: T) =>
   a.reduce((acc, k) => ({ ...acc, [k]: b.includes(k) }), {});
 
-export { pick, isNil, normalizeSubscriptions };
+const notEquals = (a: any, b: any) => !equals(a, b);
+
+export { pick, isNil, normalizeSubscriptions, notEquals };
