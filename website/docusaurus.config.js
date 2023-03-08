@@ -19,7 +19,12 @@ module.exports = {
         {
           href: 'https://stackblitz.com/edit/react-ts-xjh6yd?file=index.tsx',
           position: 'left',
-          label: 'Demo',
+          label: 'Base demo',
+        },
+        {
+          href: 'https://stackblitz.com/edit/react-ts-r8fy3e?file=index.tsx',
+          position: 'left',
+          label: 'Dynamic validation demo',
         },
         {
           href: 'https://github.com/binjospookie/effector-final-form',
