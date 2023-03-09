@@ -4,7 +4,7 @@ import { createForm } from '../../index';
 
 describe('api.resetFieldState', () => {
   test('', async () => {
-    const { $fields, api } = createForm<{ firstName: [string] }, ['values']>({
+    const { api } = createForm<{ firstName: [string] }, ['values']>({
       onSubmit: () => ({ firstName: 'Submit Error' }),
       subscribeOn: ['values'],
       validate: (f) => {
@@ -47,9 +47,7 @@ describe('api.resetFieldState', () => {
       await field.api.changeFx(['John']);
 
       await waitForExpect(() => {
-        const { blur, change, data, focus, ...state } = $fields.getState().firstName;
-
-        expect(state).toStrictEqual({
+        expect(field.$state.getState()).toStrictEqual({
           active: true,
           dirty: true,
           dirtySinceLastSubmit: false,
@@ -77,28 +75,26 @@ describe('api.resetFieldState', () => {
     {
       await field.api.changeFx(['Doe']);
       await waitForExpect(() => {
-        expect($fields.getState().firstName.value).toStrictEqual(['Doe']);
+        expect(field.$state.getState().value).toStrictEqual(['Doe']);
       });
 
       await api.submitFx();
       await waitForExpect(() => {
-        expect($fields.getState().firstName.submitError).toBe('Submit Error');
+        expect(field.$state.getState().submitError).toBe('Submit Error');
       });
     }
 
     {
       await field.api.changeFx(['']);
 
-      expect($fields.getState().firstName.modifiedSinceLastSubmit).toBe(true);
-      expect($fields.getState().firstName.dirtySinceLastSubmit).toBe(true);
+      expect(field.$state.getState().modifiedSinceLastSubmit).toBe(true);
+      expect(field.$state.getState().dirtySinceLastSubmit).toBe(true);
     }
 
     {
       field.api.resetState();
 
-      const { blur, change, data, focus, ...state } = $fields.getState().firstName;
-
-      expect(state).toStrictEqual({
+      expect(field.$state.getState()).toStrictEqual({
         active: false,
         dirty: true,
         dirtySinceLastSubmit: true,

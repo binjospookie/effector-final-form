@@ -2,7 +2,6 @@ import { createEffect, is } from 'effector';
 import { createForm as ffCreateForm } from 'final-form';
 
 import { createApi } from './createApi';
-import { createFields } from './createFields';
 import { createFormState } from './createFormState';
 
 import type { Config as FFConfig } from 'final-form';
@@ -43,13 +42,12 @@ const createForm = <FormValues, T extends FormSubscription>(
     finalForm.mutators.__update__();
   });
 
-  const { $fields, $registeredFields, fieldsApi } = createFields<FormValues>({ finalForm });
   const { $formState, formStateApi } = createFormState<FormValues, T>({
     finalForm,
     subscribeOn,
   });
 
-  const baseApi = createApi<FormValues, T>({ finalForm, fieldsApi, formStateApi });
+  const baseApi = createApi<FormValues, T>({ finalForm, formStateApi });
 
   // we need an error in field on start (like in form state)
   revalidateFx();
@@ -70,9 +68,7 @@ const createForm = <FormValues, T extends FormSubscription>(
       setSubmitFn,
       setValidationFn,
     },
-    $fields,
     $formState,
-    $registeredFields,
   };
 };
 

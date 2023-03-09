@@ -1,19 +1,17 @@
-import { createEffect } from 'effector';
-import { fieldSubscriptionItems } from 'final-form';
+import { createEffect, createEvent, createStore, guard, sample } from 'effector';
+import { FieldState, fieldSubscriptionItems } from 'final-form';
 
 import { normalizeSubscriptions } from './utils';
 
 import type { FormApi as FFFormApi } from 'final-form';
-import type { createFields } from './createFields';
 import type { createFormState } from './createFormState';
 import type { FormSubscription } from './types';
 
 const createApi = <FormValues, T extends FormSubscription>(config: {
   finalForm: FFFormApi<FormValues>;
-  fieldsApi: ReturnType<typeof createFields<FormValues>>['fieldsApi'];
   formStateApi: ReturnType<typeof createFormState<FormValues, T>>['formStateApi'];
 }) => {
-  const { finalForm, fieldsApi, formStateApi } = config;
+  const { finalForm, formStateApi } = config;
 
   type Form = typeof finalForm;
   type FieldNames = keyof FormValues;
@@ -29,17 +27,30 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
     <T extends FieldNames>(name: T) =>
     (value?: FormValues[T]) =>
       finalForm.change(name, value);
-  const registerFieldHandler = <T extends readonly (keyof RegisterFieldParams[2])[]>({
+  const registerField = <T extends readonly (keyof RegisterFieldParams[2])[]>({
     name,
     subscribeOn,
     config,
   }: RegisterFieldConfig<T>) => {
+    // fixme: correct type of field [from config initial or Generic]
+    type State = Pick<FieldState<string>, 'value' | (typeof subscribeOn)[number]>;
+
+    const subscriber = createEvent<any>();
+
     finalForm.registerField(
       name,
-      fieldsApi.update,
+      subscriber,
       normalizeSubscriptions(fieldSubscriptionItems, [...subscribeOn, 'value']),
       config,
     );
+
+    // fixme: remove keys that not presented in subscribeOn
+    const $state = createStore<State>(finalForm.getFieldState(name) as unknown as State);
+
+    sample({
+      clock: subscriber.filterMap(({ blur, change, focus, ...rest }) => (rest.name === name ? rest : undefined)),
+      target: $state,
+    });
 
     const changeHandler = makeChangeHandler(name);
 
@@ -56,7 +67,7 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
       }),
     };
 
-    return { api };
+    return { api, $state };
   };
 
   const pauseValidationHandler = () => {
@@ -71,7 +82,7 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
   const api = {
     initialize: createEffect(finalForm.initialize), // form api
     pauseValidation: createEffect(pauseValidationHandler), // form api
-    registerField: registerFieldHandler, // form api
+    registerField, // form api
     reset: createEffect(finalForm.reset), // form api
     restart: createEffect(finalForm.restart), // form api
     resumeValidation: createEffect(resumeValidationHandler), // form api

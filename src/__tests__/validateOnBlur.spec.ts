@@ -6,7 +6,7 @@ const onSubmitMock = () => {};
 
 describe('validateOnBlur', () => {
   test('', async () => {
-    const { $formState, api, $fields } = createForm({
+    const { $formState, api } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: 'John' },
       subscribeOn: ['values', 'errors'],
@@ -25,7 +25,7 @@ describe('validateOnBlur', () => {
       await field.api.changeFx('Bob');
 
       expect($formState.getState().errors).toStrictEqual({});
-      expect($fields.getState().firstName.error).toBe(undefined);
+      expect(field.$state.getState().error).toBe(undefined);
     }
 
     {
@@ -35,14 +35,14 @@ describe('validateOnBlur', () => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
       });
 
-      expect($fields.getState().firstName.error).toBe('Error');
+      expect(field.$state.getState().error).toBe('Error');
     }
 
     {
       await field.api.focusFx();
       await field.api.changeFx('Steve');
       expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
-      expect($fields.getState().firstName.error).toBe('Error');
+      expect(field.$state.getState().error).toBe('Error');
     }
 
     {
@@ -50,7 +50,7 @@ describe('validateOnBlur', () => {
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({});
       });
-      expect($fields.getState().firstName.error).toBe(undefined);
+      expect(field.$state.getState().error).toBe(undefined);
     }
   });
 });

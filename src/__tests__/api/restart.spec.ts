@@ -6,7 +6,7 @@ const onSubmitMock = () => {};
 
 describe('api.restart', () => {
   test('with initialValues', async () => {
-    const { $fields, api, $formState } = createForm({
+    const { api, $formState } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: '' },
       subscribeOn: ['values', 'initialValues', 'errors'],
@@ -17,11 +17,12 @@ describe('api.restart', () => {
       },
     });
 
+    const field = api.registerField({ name: 'firstName', subscribeOn: ['value'] });
+
     {
-      const field = api.registerField({ name: 'firstName', subscribeOn: ['value'] });
       await field.api.changeFx(undefined);
 
-      expect($fields.getState().firstName.value).toBe(undefined);
+      expect(field.$state.getState().value).toBe(undefined);
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'error' });
       });
@@ -30,7 +31,7 @@ describe('api.restart', () => {
     {
       await api.restart();
 
-      expect($fields.getState().firstName.value).toBe('');
+      expect(field.$state.getState().value).toBe('');
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({});
@@ -38,7 +39,7 @@ describe('api.restart', () => {
     }
   });
   test('with initialValues', async () => {
-    const { $fields, api, $formState } = createForm<{ firstName: string }, ['values', 'initialValues', 'errors']>({
+    const { api, $formState } = createForm<{ firstName: string }, ['values', 'initialValues', 'errors']>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'initialValues', 'errors'],
       validate: (f) => {
@@ -48,11 +49,12 @@ describe('api.restart', () => {
       },
     });
 
+    const field = api.registerField({ name: 'firstName', subscribeOn: ['value'] });
+
     {
-      const field = api.registerField({ name: 'firstName', subscribeOn: ['value'] });
       field.api.changeFx('John');
 
-      expect($fields.getState().firstName.value).toBe('John');
+      expect(field.$state.getState().value).toBe('John');
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'error' });
       });
@@ -61,7 +63,7 @@ describe('api.restart', () => {
     {
       await api.restart();
 
-      expect($fields.getState().firstName.value).toBe(undefined);
+      expect(field.$state.getState().value).toBe(undefined);
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({});

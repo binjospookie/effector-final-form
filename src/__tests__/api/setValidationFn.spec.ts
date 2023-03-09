@@ -6,7 +6,7 @@ const onSubmitMock = () => {};
 
 describe('api.setValidationFn', () => {
   test('', async () => {
-    const { $formState, api, $fields } = createForm({
+    const { $formState, api } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: 'John' },
       subscribeOn: ['values', 'errors'],
@@ -25,7 +25,7 @@ describe('api.setValidationFn', () => {
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
-        expect($fields.getState().firstName.error).toBe('Error');
+        expect(field.$state.getState().error).toBe('Error');
       });
     }
 
@@ -34,7 +34,7 @@ describe('api.setValidationFn', () => {
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'New validation error' });
-        expect($fields.getState().firstName.error).toBe('New validation error');
+        expect(field.$state.getState().error).toBe('New validation error');
       });
     }
   });

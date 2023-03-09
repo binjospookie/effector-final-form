@@ -7,7 +7,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('api.submitFx', () => {
   test('', async () => {
-    const { $formState, $fields, api } = createForm({
+    const { $formState, api } = createForm({
       onSubmit: async (f) => {
         await sleep(1000);
 
@@ -26,15 +26,15 @@ describe('api.submitFx', () => {
       ],
     });
 
-    const fields = api.registerField({
+    const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['submitting', 'submitError', 'submitSucceeded', 'submitFailed', 'modifiedSinceLastSubmit'],
     });
 
     {
-      fields.api.changeFx('John');
+      field.api.changeFx('John');
       expect($formState.getState().modifiedSinceLastSubmit).toBe(false);
-      expect($fields.getState().firstName.modifiedSinceLastSubmit).toBe(false);
+      expect(field.$state.getState()?.modifiedSinceLastSubmit).toBe(false);
 
       const submitPromise = api.submitFx();
 
@@ -50,18 +50,18 @@ describe('api.submitFx', () => {
       await waitForExpect(() => {
         expect($formState.getState().submitting).toBe(false);
       });
-      expect($fields.getState().firstName.submitError).toBe(undefined);
-      expect($fields.getState().firstName.submitSucceeded).toBe(true);
-      expect($fields.getState().firstName.submitFailed).toBe(false);
+      expect(field.$state.getState()?.submitError).toBe(undefined);
+      expect(field.$state.getState()?.submitSucceeded).toBe(true);
+      expect(field.$state.getState()?.submitFailed).toBe(false);
       expect($formState.getState().submitErrors).toBe(null);
       expect($formState.getState().submitSucceeded).toBe(true);
       expect($formState.getState().submitFailed).toBe(false);
     }
 
     {
-      fields.api.changeFx('');
+      field.api.changeFx('');
       expect($formState.getState().modifiedSinceLastSubmit).toBe(true);
-      expect($fields.getState().firstName.modifiedSinceLastSubmit).toBe(true);
+      expect(field.$state.getState()?.modifiedSinceLastSubmit).toBe(true);
 
       const submitPromise = api.submitFx();
 
@@ -77,9 +77,9 @@ describe('api.submitFx', () => {
       await waitForExpect(() => {
         expect($formState.getState().submitting).toBe(false);
       });
-      expect($fields.getState().firstName.submitError).toBe('Submit Error');
-      expect($fields.getState().firstName.submitSucceeded).toBe(false);
-      expect($fields.getState().firstName.submitFailed).toBe(true);
+      expect(field.$state.getState()?.submitError).toBe('Submit Error');
+      expect(field.$state.getState()?.submitSucceeded).toBe(false);
+      expect(field.$state.getState()?.submitFailed).toBe(true);
       expect($formState.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
       expect($formState.getState().submitSucceeded).toBe(false);
       expect($formState.getState().submitFailed).toBe(true);

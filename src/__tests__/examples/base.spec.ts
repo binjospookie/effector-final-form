@@ -8,7 +8,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('example', () => {
   test('', async () => {
-    const { $formState, $fields, api } = createForm({
+    const { $formState, api } = createForm({
       onSubmit: async (f) => {
         await sleep(1000);
 
@@ -27,10 +27,10 @@ describe('example', () => {
     field.api.changeFx('');
 
     await waitForExpect(() => {
-      expect($fields.getState().firstName.error).toBe('Can not be empty');
+      expect(field.$state.getState().error).toBe('Can not be empty');
     });
-    expect($fields.getState().firstName.initial).toBe('');
-    expect($fields.getState().firstName.value).toBe('');
+    expect(field.$state.getState().initial).toBe('');
+    expect(field.$state.getState().value).toBe('');
 
     expect($formState.getState().errors).toStrictEqual({ firstName: 'Can not be empty' });
     expect($formState.getState().values).toStrictEqual({ firstName: '' });
@@ -43,8 +43,8 @@ describe('example', () => {
       await field.api.changeFx('Incorrect');
 
       await waitForExpect(() => {
-        expect($fields.getState().firstName.error).toBe(undefined);
-        expect($fields.getState().firstName.value).toBe('Incorrect');
+        expect(field.$state.getState().error).toBe(undefined);
+        expect(field.$state.getState().value).toBe('Incorrect');
         expect($formState.getState().errors).toStrictEqual({});
       });
     }
@@ -68,8 +68,8 @@ describe('example', () => {
     {
       await field.api.changeFx('John');
 
-      expect($fields.getState().firstName.error).toBe(undefined);
-      expect($fields.getState().firstName.value).toBe('John');
+      expect(field.$state.getState().error).toBe(undefined);
+      expect(field.$state.getState().value).toBe('John');
       expect($formState.getState().errors).toStrictEqual({});
 
       const submitPromise = api.submitFx();
