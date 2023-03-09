@@ -18,8 +18,8 @@ describe('api.restart', () => {
     });
 
     {
-      api.registerField({ name: 'firstName', subscribeOn: ['value'] });
-      await api.changeFx({ name: 'firstName', value: undefined });
+      const field = api.registerField({ name: 'firstName', subscribeOn: ['value'] });
+      await field.api.changeFx(undefined);
 
       expect($fields.getState().firstName.value).toBe(undefined);
       await waitForExpect(() => {
@@ -49,8 +49,8 @@ describe('api.restart', () => {
     });
 
     {
-      api.registerField({ name: 'firstName', subscribeOn: ['value'] });
-      api.changeFx({ name: 'firstName', value: 'John' });
+      const field = api.registerField({ name: 'firstName', subscribeOn: ['value'] });
+      field.api.changeFx('John');
 
       expect($fields.getState().firstName.value).toBe('John');
       await waitForExpect(() => {

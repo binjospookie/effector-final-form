@@ -19,12 +19,12 @@ describe('example', () => {
       subscribeOn: ['values', 'errors', 'submitting', 'submitSucceeded', 'submitFailed', 'submitErrors'],
     });
 
-    await api.registerField({
+    const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['value', 'error', 'initial'],
     });
 
-    api.changeFx({ name: 'firstName', value: '' });
+    field.api.changeFx('');
 
     await waitForExpect(() => {
       expect($fields.getState().firstName.error).toBe('Can not be empty');
@@ -40,7 +40,7 @@ describe('example', () => {
     expect($formState.getState().submitErrors).toBe(null);
 
     {
-      await api.changeFx({ name: 'firstName', value: 'Incorrect' });
+      await field.api.changeFx('Incorrect');
 
       await waitForExpect(() => {
         expect($fields.getState().firstName.error).toBe(undefined);
@@ -66,7 +66,7 @@ describe('example', () => {
     }
 
     {
-      await api.changeFx({ name: 'firstName', value: 'John' });
+      await field.api.changeFx('John');
 
       expect($fields.getState().firstName.error).toBe(undefined);
       expect($fields.getState().firstName.value).toBe('John');

@@ -9,18 +9,16 @@ describe('api.reset', () => {
       subscribeOn: ['values', 'initialValues'],
     });
 
-    {
-      await api.initialize({ firstName: 'John', lastName: 'Doe' });
-      api.registerField({ name: 'firstName', subscribeOn: ['initial', 'value'] });
-      api.registerField({ name: 'lastName', subscribeOn: ['initial', 'value'] });
+    await api.initialize({ firstName: 'John', lastName: 'Doe' });
+    const firstNameField = api.registerField({ name: 'firstName', subscribeOn: ['initial', 'value'] });
+    const lastNameField = api.registerField({ name: 'lastName', subscribeOn: ['initial', 'value'] });
 
-      expect($fields.getState().firstName.initial).toBe('John');
-      expect($fields.getState().lastName.initial).toBe('Doe');
-    }
+    expect($fields.getState().firstName.initial).toBe('John');
+    expect($fields.getState().lastName.initial).toBe('Doe');
 
     {
-      await api.changeFx({ name: 'firstName', value: 'Bill' });
-      await api.changeFx({ name: 'lastName', value: 'Smith' });
+      await firstNameField.api.changeFx('Bill');
+      await lastNameField.api.changeFx('Smith');
 
       expect($fields.getState().firstName.value).toBe('Bill');
       expect($fields.getState().lastName.value).toBe('Smith');
@@ -54,11 +52,11 @@ describe('api.reset', () => {
     });
 
     {
-      api.registerField({ name: 'firstName', subscribeOn: ['initial', 'value'] });
-      api.registerField({ name: 'lastName', subscribeOn: ['initial', 'value'] });
+      const firstNameField = api.registerField({ name: 'firstName', subscribeOn: ['initial', 'value'] });
+      const lastNameField = api.registerField({ name: 'lastName', subscribeOn: ['initial', 'value'] });
 
-      await api.changeFx({ name: 'firstName', value: 'Bill' });
-      await api.changeFx({ name: 'lastName', value: 'Smith' });
+      await firstNameField.api.changeFx('Bill');
+      await lastNameField.api.changeFx('Smith');
 
       expect($fields.getState().firstName.initial).toBe('John');
       expect($fields.getState().firstName.value).toBe('Bill');

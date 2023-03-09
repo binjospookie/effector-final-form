@@ -9,15 +9,15 @@ describe('api.changeFx', () => {
       subscribeOn: ['values'],
     });
 
-    {
-      api.registerField({ name: 'firstName', subscribeOn: ['value'] });
+    const field = api.registerField({ name: 'firstName', subscribeOn: ['value'] });
 
+    {
       expect($formState.getState().values).toStrictEqual({});
       expect($fields.getState().firstName.value).toBe(undefined);
     }
 
     {
-      await api.changeFx({ name: 'firstName', value: 'John' });
+      await field.api.changeFx('John');
       expect($formState.getState().values).toStrictEqual({ firstName: 'John' });
       expect($fields.getState().firstName.value).toBe('John');
     }
@@ -30,14 +30,15 @@ describe('api.changeFx', () => {
       subscribeOn: ['values'],
     });
 
+    const field = api.registerField({ name: 'firstName', subscribeOn: ['value'] });
+
     {
-      api.registerField({ name: 'firstName', subscribeOn: ['value'] });
       expect($formState.getState().values).toStrictEqual({ firstName: '' });
       expect($fields.getState().firstName.value).toBe('');
     }
 
     {
-      await api.changeFx({ name: 'firstName', value: 'John' });
+      await field.api.changeFx('John');
       expect($formState.getState().values).toStrictEqual({ firstName: 'John' });
       expect($fields.getState().firstName.value).toBe('John');
     }

@@ -18,7 +18,6 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
   type Form = typeof finalForm;
   type FieldNames = keyof FormValues;
 
-  type ChangeConfig<T extends FieldNames> = { name: T; value?: FormValues[T] };
   type RegisterFieldParams = Parameters<Form['registerField']>;
   type RegisterFieldConfig<T extends readonly (keyof RegisterFieldParams[2])[]> = {
     name: RegisterFieldParams[0];
@@ -26,7 +25,10 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
     config?: RegisterFieldParams[3];
   };
 
-  const changeHandler = ({ name, value }: ChangeConfig<FieldNames>) => finalForm.change(name, value);
+  const makeChangeHandler =
+    <T extends FieldNames>(name: T) =>
+    (value?: FormValues[T]) =>
+      finalForm.change(name, value);
   const registerFieldHandler = <T extends readonly (keyof RegisterFieldParams[2])[]>({
     name,
     subscribeOn,
@@ -38,6 +40,23 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
       normalizeSubscriptions(fieldSubscriptionItems, [...subscribeOn, 'value']),
       config,
     );
+
+    const changeHandler = makeChangeHandler(name);
+
+    const api = {
+      blurFx: createEffect(() => {
+        finalForm.blur(name);
+      }),
+      changeFx: createEffect(changeHandler),
+      focusFx: createEffect(() => {
+        finalForm.focus(name);
+      }),
+      resetState: createEffect(() => {
+        finalForm.resetFieldState(name);
+      }),
+    };
+
+    return { api };
   };
 
   const pauseValidationHandler = () => {
@@ -50,17 +69,13 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
   };
 
   const api = {
-    blurFx: createEffect(finalForm.blur),
-    changeFx: createEffect(changeHandler),
-    focusFx: createEffect(finalForm.focus),
-    initialize: createEffect(finalForm.initialize),
-    pauseValidation: createEffect(pauseValidationHandler),
-    registerField: createEffect(registerFieldHandler),
-    reset: createEffect(finalForm.reset),
-    resetFieldState: createEffect(finalForm.resetFieldState),
-    restart: createEffect(finalForm.restart),
-    resumeValidation: createEffect(resumeValidationHandler),
-    submitFx: createEffect(finalForm.submit),
+    initialize: createEffect(finalForm.initialize), // form api
+    pauseValidation: createEffect(pauseValidationHandler), // form api
+    registerField: registerFieldHandler, // form api
+    reset: createEffect(finalForm.reset), // form api
+    restart: createEffect(finalForm.restart), // form api
+    resumeValidation: createEffect(resumeValidationHandler), // form api
+    submitFx: createEffect(finalForm.submit), // form api
   };
 
   return api;

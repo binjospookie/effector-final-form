@@ -17,11 +17,11 @@ describe('api.setValidationFn', () => {
       },
     });
 
-    await api.registerField({ name: 'firstName', subscribeOn: ['error'] });
+    const field = api.registerField({ name: 'firstName', subscribeOn: ['error'] });
 
     {
-      api.focusFx('firstName');
-      await api.changeFx({ name: 'firstName', value: 'Bob' });
+      field.api.focusFx();
+      await field.api.changeFx('Bob');
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });

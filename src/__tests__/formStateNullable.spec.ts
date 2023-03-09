@@ -20,9 +20,10 @@ describe('formStateNullable', () => {
       expect($formState.getState().visited).toStrictEqual({});
     }
 
+    const field = api.registerField({ name: 'firstName', subscribeOn: [] });
+
     {
-      await api.registerField({ name: 'firstName', subscribeOn: [] });
-      await api.focusFx('firstName');
+      await field.api.focusFx();
 
       expect($formState.getState().active).toBe('firstName');
       expect($formState.getState().errors).toStrictEqual({});
@@ -33,14 +34,14 @@ describe('formStateNullable', () => {
     }
 
     {
-      await api.changeFx({ name: 'firstName', value: 'Bob' });
+      await field.api.changeFx('Bob');
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
       });
     }
 
     {
-      await api.changeFx({ name: 'firstName', value: 'Steve' });
+      await field.api.changeFx('Steve');
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({});

@@ -26,13 +26,13 @@ describe('api.submitFx', () => {
       ],
     });
 
-    api.registerField({
+    const fields = api.registerField({
       name: 'firstName',
       subscribeOn: ['submitting', 'submitError', 'submitSucceeded', 'submitFailed', 'modifiedSinceLastSubmit'],
     });
 
     {
-      api.changeFx({ name: 'firstName', value: 'John' });
+      fields.api.changeFx('John');
       expect($formState.getState().modifiedSinceLastSubmit).toBe(false);
       expect($fields.getState().firstName.modifiedSinceLastSubmit).toBe(false);
 
@@ -59,7 +59,7 @@ describe('api.submitFx', () => {
     }
 
     {
-      await api.changeFx({ name: 'firstName', value: '' });
+      fields.api.changeFx('');
       expect($formState.getState().modifiedSinceLastSubmit).toBe(true);
       expect($fields.getState().firstName.modifiedSinceLastSubmit).toBe(true);
 
