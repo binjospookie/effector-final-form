@@ -20,7 +20,7 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
   type RegisterFieldConfig<P, T extends readonly (keyof RegisterFieldParams[2])[]> = {
     name: RegisterFieldParams[0];
     subscribeOn: T;
-    config?: Omit<RegisterFieldParams[3], 'initialValue'> & {
+    config?: Omit<NonNullable<RegisterFieldParams[3]>, 'initialValue'> & {
       initialValue?: P | Store<P>;
     };
   };
