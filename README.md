@@ -26,18 +26,6 @@ Just import from the root module:
 import { createForm } from 'effector-final-form';
 ```
 
-## API
-
-[Documentation link](https://binjospookie.github.io/effector-final-form/docs/api)
-
-## Differences from Final Form
-
-[Documentation link](https://binjospookie.github.io/effector-final-form/docs/differences)
-
-## Limitations
-
-[Documentation link](https://binjospookie.github.io/effector-final-form/docs/limitations)
-
 ## Base example
 
 ```ts
@@ -79,6 +67,18 @@ form.api.submitFx();
 ```
 
 [Try it](https://stackblitz.com/edit/typescript-5fydjc?file=index.ts)
+
+## API
+
+[Documentation link](https://binjospookie.github.io/effector-final-form/docs/api)
+
+## Differences from Final Form
+
+[Documentation link](https://binjospookie.github.io/effector-final-form/docs/differences)
+
+## Limitations
+
+[Documentation link](https://binjospookie.github.io/effector-final-form/docs/limitations)
 
 ## More examples
 
