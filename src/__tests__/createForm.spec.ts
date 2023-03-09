@@ -1,3 +1,4 @@
+import { createStore } from 'effector';
 import { createForm } from '../index';
 
 const onSubmitMock = () => {};
@@ -16,10 +17,26 @@ describe('createForm', () => {
     });
   });
 
-  test('with initial values', () => {
+  test('with initial values from kv', () => {
     const { $formState } = createForm({
       onSubmit: onSubmitMock,
       initialValues: { firstName: 'John' },
+      subscribeOn: ['initialValues', 'values'],
+    });
+
+    expect($formState.getState()).toStrictEqual({
+      initialValues: { firstName: 'John' },
+      isValidationPaused: false,
+      values: { firstName: 'John' },
+    });
+  });
+
+  test('with initial values from $', () => {
+    const $initialValues = createStore({ firstName: 'John' });
+
+    const { $formState } = createForm({
+      onSubmit: onSubmitMock,
+      initialValues: $initialValues,
       subscribeOn: ['initialValues', 'values'],
     });
 

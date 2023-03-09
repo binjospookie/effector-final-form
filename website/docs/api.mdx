@@ -35,6 +35,21 @@ const { api, $fields, $formState, $registeredFields } = createForm({
 });
 ```
 
+```ts title="With initial values as $"
+const $initialValues = createStore({ firstName: '' });
+
+const { api, $fields, $formState, $registeredFields } = createForm({
+  onSubmit: async (f) => {
+    await sleep(1000);
+
+    return f.firstName === 'Incorrect' ? { firstName: 'Submit Error' } : undefined;
+  },
+  validate: (f) => (f.firstName === '' ? { firstName: 'Can not be empty' } : undefined),
+  initialValues: $initialValues,
+  subscribeOn: ['values', 'errors', 'submitting', 'submitSucceeded', 'submitFailed', 'submitErrors'],
+});
+```
+
 ```ts title="Without initial values"
 const subscribeOn = [
   'values',
