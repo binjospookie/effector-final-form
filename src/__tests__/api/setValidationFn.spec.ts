@@ -9,17 +9,13 @@ describe('api.setValidationFn', () => {
     const { $formState, api } = createForm<{ firstName: string }, ['values', 'errors']>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'errors'],
-      validate: (f) => {
-        if (f?.firstName === 'Bob') {
-          return { firstName: 'Error' };
-        }
-      },
     });
 
     const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['error'],
-      config: { initialValue: 'John' },
+      initialValue: 'John',
+      validate: (v) => (v === 'Bob' ? 'Error' : undefined),
     });
 
     {
@@ -33,7 +29,7 @@ describe('api.setValidationFn', () => {
     }
 
     {
-      api.setValidationFn(() => ({ firstName: 'New validation error' }));
+      field.api.setValidationFn(() => 'New validation error');
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'New validation error' });

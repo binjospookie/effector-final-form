@@ -14,7 +14,7 @@ describe('api.registerField', () => {
     const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['value'],
-      config: { initialValue: 'defaultValue' },
+      initialValue: 'defaultValue',
     });
 
     expect($formState.getState().values).toStrictEqual({ firstName: 'defaultValue' });
@@ -32,7 +32,7 @@ describe('api.registerField', () => {
     const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['value'],
-      config: { initialValue: $initialValue },
+      initialValue: $initialValue,
     });
     expect($formState.getState().values).toStrictEqual({ firstName: 'defaultValue' });
     expect(field.$state.getState().value).toBe('defaultValue');

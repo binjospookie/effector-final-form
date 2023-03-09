@@ -12,12 +12,12 @@ describe('api.reset', () => {
     const firstNameField = api.registerField({
       name: 'firstName',
       subscribeOn: ['initial', 'value'],
-      config: { initialValue: 'John' },
+      initialValue: 'John',
     });
     const lastNameField = api.registerField({
       name: 'lastName',
       subscribeOn: ['initial', 'value'],
-      config: { initialValue: 'Doe' },
+      initialValue: 'Doe',
     });
 
     expect(firstNameField.$state.getState().initial).toBe('John');

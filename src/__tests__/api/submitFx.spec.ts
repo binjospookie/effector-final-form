@@ -38,7 +38,7 @@ describe('api.submitFx', () => {
     const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['submitting', 'submitError', 'submitSucceeded', 'submitFailed', 'modifiedSinceLastSubmit'],
-      config: { initialValue: '' },
+      initialValue: '',
     });
 
     {

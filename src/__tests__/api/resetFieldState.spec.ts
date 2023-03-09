@@ -7,14 +7,9 @@ describe('api.resetFieldState', () => {
     const { api } = createForm<{ firstName: [string] }, ['values']>({
       onSubmit: () => ({ firstName: 'Submit Error' }),
       subscribeOn: ['values'],
-      validate: (f) => {
-        if (f.firstName && f.firstName[0] === 'John') {
-          return { firstName: 'StaticError' };
-        }
-      },
     });
 
-    const field = api.registerField({
+    const field = api.registerField<string[]>({
       name: 'firstName',
       subscribeOn: [
         'submitError',
@@ -37,6 +32,7 @@ describe('api.resetFieldState', () => {
         'value',
         'visited',
       ],
+      validate: (v) => (v && v[0] === 'John' ? 'StaticError' : undefined),
     });
 
     {
@@ -94,27 +90,29 @@ describe('api.resetFieldState', () => {
     {
       field.api.resetState();
 
-      expect(field.$state.getState()).toStrictEqual({
-        active: false,
-        dirty: true,
-        dirtySinceLastSubmit: true,
-        error: undefined,
-        initial: undefined,
-        invalid: true,
-        length: 1,
-        modified: false,
-        modifiedSinceLastSubmit: true,
-        name: 'firstName',
-        pristine: false,
-        submitError: 'Submit Error',
-        submitFailed: true,
-        submitSucceeded: false,
-        submitting: false,
-        touched: false,
-        valid: false,
-        validating: false,
-        value: [''],
-        visited: false,
+      await waitForExpect(() => {
+        expect(field.$state.getState()).toStrictEqual({
+          active: false,
+          dirty: true,
+          dirtySinceLastSubmit: true,
+          error: undefined,
+          initial: undefined,
+          invalid: true,
+          length: 1,
+          modified: false,
+          modifiedSinceLastSubmit: true,
+          name: 'firstName',
+          pristine: false,
+          submitError: 'Submit Error',
+          submitFailed: true,
+          submitSucceeded: false,
+          submitting: false,
+          touched: false,
+          valid: false,
+          validating: false,
+          value: [''],
+          visited: false,
+        });
       });
     }
   });

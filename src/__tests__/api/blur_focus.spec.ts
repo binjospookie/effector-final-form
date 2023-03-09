@@ -12,7 +12,7 @@ describe('api.blur_focus', () => {
   const field = api.registerField({
     name: 'firstName',
     subscribeOn: ['active'],
-    config: { initialValue: '' },
+    initialValue: '',
   });
 
   test('api.focusFx', async () => {

@@ -10,7 +10,6 @@ describe('formStateNullable', () => {
     >({
       onSubmit: () => ({ firstName: 'Submit Error' }),
       subscribeOn: ['active', 'errors', 'modified', 'submitErrors', 'touched', 'visited'],
-      validate: (f) => (f.firstName === 'Bob' ? { firstName: 'Error' } : undefined),
     });
 
     {
@@ -22,7 +21,12 @@ describe('formStateNullable', () => {
       expect($formState.getState().visited).toStrictEqual({});
     }
 
-    const field = api.registerField({ name: 'firstName', subscribeOn: [], config: { initialValue: 'John' } });
+    const field = api.registerField({
+      name: 'firstName',
+      subscribeOn: [],
+      initialValue: 'John',
+      validate: (v) => (v === 'Bob' ? 'Error' : undefined),
+    });
 
     {
       await field.api.focusFx();

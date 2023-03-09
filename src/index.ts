@@ -7,22 +7,18 @@ import { createFormState } from './createFormState';
 import type { Config as FFConfig } from 'final-form';
 import type { FormSubscription } from './types';
 
-const baseValidator = () => undefined;
-
 const createForm = <FormValues, T extends FormSubscription>(
-  config: Omit<FFConfig<FormValues>, 'debug' | 'initialValues'> & {
+  config: Omit<FFConfig<FormValues>, 'debug' | 'initialValues' | 'validate'> & {
     subscribeOn: T;
   },
 ) => {
   const { subscribeOn, ...finalFormConfig } = config;
 
-  const validateFx = createEffect(finalFormConfig.validate ?? baseValidator);
   const submitFx = createEffect(finalFormConfig.onSubmit);
 
   const finalForm = ffCreateForm({
     ...finalFormConfig,
-    validate: validateFx,
-    onSubmit: async (x) => {
+    onSubmit: async (x: FormValues) => {
       try {
         return await submitFx(x);
       } catch (e) {
@@ -44,26 +40,13 @@ const createForm = <FormValues, T extends FormSubscription>(
     subscribeOn,
   });
 
-  const baseApi = createApi<FormValues, T>({ finalForm, formStateApi });
-
-  // we need an error in field on start (like in form state)
-  revalidateFx();
-
-  const setValidationFn = (fn: Parameters<typeof validateFx.use>[0]) => {
-    validateFx.use(fn);
-    revalidateFx();
-  };
-
-  const setSubmitFn = (fn: Parameters<typeof submitFx.use>[0]) => {
-    submitFx.use(fn);
-  };
+  const baseApi = createApi<FormValues, T>({ finalForm, formStateApi, revalidateFx });
 
   return {
     api: {
       ...baseApi,
       revalidateFx,
-      setSubmitFn,
-      setValidationFn,
+      setSubmitFn: submitFx.use,
     },
     $formState,
   };

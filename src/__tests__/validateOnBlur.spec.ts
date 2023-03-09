@@ -9,18 +9,14 @@ describe('validateOnBlur', () => {
     const { $formState, api } = createForm<{ firstName: string }, ['values', 'errors']>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'errors'],
-      validate: (f) => {
-        if (f?.firstName === 'Bob') {
-          return { firstName: 'Error' };
-        }
-      },
       validateOnBlur: true,
     });
 
     const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['error'],
-      config: { initialValue: 'John' },
+      initialValue: 'John',
+      validate: (v) => (v === 'Bob' ? 'Error' : undefined),
     });
 
     {

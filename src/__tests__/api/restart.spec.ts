@@ -9,14 +9,14 @@ describe('api.restart', () => {
     const { api, $formState } = createForm<{ firstName: string }, ['values', 'initialValues', 'errors']>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'initialValues', 'errors'],
-      validate: (f) => {
-        if (f?.firstName === undefined) {
-          return { firstName: 'error' };
-        }
-      },
     });
 
-    const field = api.registerField({ name: 'firstName', subscribeOn: ['value'], config: { initialValue: '' } });
+    const field = api.registerField({
+      name: 'firstName',
+      subscribeOn: ['value'],
+      initialValue: '',
+      validate: (v) => (v === undefined ? 'error' : undefined),
+    });
 
     {
       await field.api.changeFx(undefined);

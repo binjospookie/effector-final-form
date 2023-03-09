@@ -7,11 +7,14 @@ import type { FormApi as FFFormApi } from 'final-form';
 import type { createFormState } from './createFormState';
 import type { FormSubscription } from './types';
 
+const baseValidator = <P>(_?: P) => undefined;
+
 const createApi = <FormValues, T extends FormSubscription>(config: {
   finalForm: FFFormApi<FormValues>;
   formStateApi: ReturnType<typeof createFormState<FormValues, T>>['formStateApi'];
+  revalidateFx: () => void;
 }) => {
-  const { finalForm, formStateApi } = config;
+  const { finalForm, formStateApi, revalidateFx } = config;
 
   type Form = typeof finalForm;
   type FieldNames = keyof FormValues;
@@ -20,9 +23,9 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
   type RegisterFieldConfig<P, T extends readonly (keyof RegisterFieldParams[2])[]> = {
     name: RegisterFieldParams[0];
     subscribeOn: T;
-    config?: Omit<NonNullable<RegisterFieldParams[3]>, 'initialValue'> & {
-      initialValue?: P | Store<P>;
-    };
+    initialValue?: P | Store<P>;
+    validate?: (value?: P) => any | undefined | Promise<any> | Promise<undefined>;
+    config?: Omit<NonNullable<RegisterFieldParams[3]>, 'initialValue' | 'getValidator'>;
   };
 
   const makeChangeHandler =
@@ -33,11 +36,15 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
     name,
     subscribeOn,
     config = {},
+    initialValue,
+    validate,
   }: RegisterFieldConfig<P, T>) => {
-    const { initialValue, ...restConfig } = config;
+    const validateFx = createEffect<P | undefined, void>(validate ?? baseValidator);
+
     const parsedConfig = {
-      ...restConfig,
+      ...config,
       initialValue: is.store(initialValue) ? initialValue.getState() : initialValue,
+      getValidator: (_?: P) => validateFx,
     };
 
     type State = Pick<FieldState<P>, 'value' | (typeof subscribeOn)[number]>;
@@ -48,12 +55,14 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
       name,
       subscriber,
       normalizeSubscriptions(fieldSubscriptionItems, [...subscribeOn, 'value']),
+      // @ts-expect-error
       parsedConfig,
     );
 
+    revalidateFx();
+
     // @ts-expect-error
     const normalizedState = pick([...subscribeOn, 'value'], finalForm.getFieldState(name));
-    // fixme: remove keys that not presented in subscribeOn
     const $state = createStore<State>(normalizedState as unknown as State);
 
     sample({
@@ -74,6 +83,10 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
       resetState: createEffect(() => {
         finalForm.resetFieldState(name);
       }),
+      setValidationFn: (fn: Parameters<typeof validateFx.use>[0]) => {
+        validateFx.use(fn);
+        revalidateFx();
+      },
     };
 
     return { api, $state };
@@ -90,11 +103,10 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
 
   const api = {
     pauseValidation: createEffect(pauseValidationHandler), // form api
-    resumeValidation: createEffect(resumeValidationHandler), // form api
-
     registerField, // form api
     reset: createEffect(finalForm.reset), // form api
     restart: createEffect(finalForm.restart), // form api
+    resumeValidation: createEffect(resumeValidationHandler), // form api
     submitFx: createEffect(finalForm.submit), // form api
   };
 

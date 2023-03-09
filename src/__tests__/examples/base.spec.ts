@@ -22,14 +22,14 @@ describe('example', () => {
 
         return f.firstName === 'Incorrect' ? { firstName: 'Submit Error' } : undefined;
       },
-      validate: (f) => (f.firstName === '' ? { firstName: 'Can not be empty' } : undefined),
       subscribeOn: ['values', 'errors', 'submitting', 'submitSucceeded', 'submitFailed', 'submitErrors'],
     });
 
     const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['value', 'error', 'initial'],
-      config: { initialValue: '' },
+      initialValue: '',
+      validate: (v) => (v === '' ? 'Can not be empty' : undefined),
     });
 
     field.api.changeFx('');
