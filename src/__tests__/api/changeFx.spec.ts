@@ -4,42 +4,22 @@ const onSubmitMock = () => {};
 
 describe('api.changeFx', () => {
   test('without initialValues', async () => {
-    const { $formState, $fields, api } = createForm<{ firstName: string }, ['values']>({
+    const { $formState, api } = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values'],
     });
 
-    {
-      api.registerField({ name: 'firstName', subscribeOn: ['value'] });
+    const field = api.registerField({ name: 'firstName', subscribeOn: ['value'] });
 
+    {
       expect($formState.getState().values).toStrictEqual({});
-      expect($fields.getState().firstName.value).toBe(undefined);
+      expect(field.$state.getState().value).toBe(undefined);
     }
 
     {
-      await api.changeFx({ name: 'firstName', value: 'John' });
+      await field.api.changeFx('John');
       expect($formState.getState().values).toStrictEqual({ firstName: 'John' });
-      expect($fields.getState().firstName.value).toBe('John');
-    }
-  });
-
-  test('with initialValues', async () => {
-    const { $formState, $fields, api } = createForm({
-      onSubmit: onSubmitMock,
-      initialValues: { firstName: '' },
-      subscribeOn: ['values'],
-    });
-
-    {
-      api.registerField({ name: 'firstName', subscribeOn: ['value'] });
-      expect($formState.getState().values).toStrictEqual({ firstName: '' });
-      expect($fields.getState().firstName.value).toBe('');
-    }
-
-    {
-      await api.changeFx({ name: 'firstName', value: 'John' });
-      expect($formState.getState().values).toStrictEqual({ firstName: 'John' });
-      expect($fields.getState().firstName.value).toBe('John');
+      expect(field.$state.getState().value).toBe('John');
     }
   });
 });

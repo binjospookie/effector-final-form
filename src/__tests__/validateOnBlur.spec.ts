@@ -6,51 +6,50 @@ const onSubmitMock = () => {};
 
 describe('validateOnBlur', () => {
   test('', async () => {
-    const { $formState, api, $fields } = createForm({
+    const { $formState, api } = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
-      initialValues: { firstName: 'John' },
       subscribeOn: ['values', 'errors'],
-      validate: (f) => {
-        if (f?.firstName === 'Bob') {
-          return { firstName: 'Error' };
-        }
-      },
       validateOnBlur: true,
     });
 
-    await api.registerField({ name: 'firstName', subscribeOn: ['error'] });
+    const field = api.registerField({
+      name: 'firstName',
+      subscribeOn: ['error'],
+      initialValue: 'John',
+      validate: (v) => (v === 'Bob' ? 'Error' : undefined),
+    });
 
     {
-      api.focusFx('firstName');
-      await api.changeFx({ name: 'firstName', value: 'Bob' });
+      field.api.focusFx();
+      await field.api.changeFx('Bob');
 
       expect($formState.getState().errors).toStrictEqual({});
-      expect($fields.getState().firstName.error).toBe(undefined);
+      expect(field.$state.getState().error).toBe(undefined);
     }
 
     {
-      await api.blurFx('firstName');
+      await field.api.blurFx();
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
       });
 
-      expect($fields.getState().firstName.error).toBe('Error');
+      expect(field.$state.getState().error).toBe('Error');
     }
 
     {
-      api.focusFx('firstName');
-      await api.changeFx({ name: 'firstName', value: 'Steve' });
+      await field.api.focusFx();
+      await field.api.changeFx('Steve');
       expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
-      expect($fields.getState().firstName.error).toBe('Error');
+      expect(field.$state.getState().error).toBe('Error');
     }
 
     {
-      await api.blurFx('firstName');
+      await field.api.blurFx();
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({});
       });
-      expect($fields.getState().firstName.error).toBe(undefined);
+      expect(field.$state.getState().error).toBe(undefined);
     }
   });
 });

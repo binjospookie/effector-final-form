@@ -1,32 +1,24 @@
-import { createEffect, is } from 'effector';
+import { createEffect } from 'effector';
 import { createForm as ffCreateForm } from 'final-form';
 
 import { createApi } from './createApi';
-import { createFields } from './createFields';
 import { createFormState } from './createFormState';
 
 import type { Config as FFConfig } from 'final-form';
 import type { FormSubscription } from './types';
 
-const baseValidator = () => undefined;
-
-const createForm = <FormValues, T extends FormSubscription>(
-  config: Omit<FFConfig<FormValues>, 'debug'> & {
+const createForm = <FormValues extends {}, T extends FormSubscription = FormSubscription>(
+  config: Omit<FFConfig<FormValues>, 'debug' | 'initialValues' | 'validate'> & {
     subscribeOn: T;
   },
 ) => {
   const { subscribeOn, ...finalFormConfig } = config;
 
-  const initialValues = is.store(config.initialValues) ? config.initialValues.getState() : config.initialValues;
-
-  const validateFx = createEffect(finalFormConfig.validate ?? baseValidator);
   const submitFx = createEffect(finalFormConfig.onSubmit);
 
   const finalForm = ffCreateForm({
     ...finalFormConfig,
-    initialValues,
-    validate: validateFx,
-    onSubmit: async (x) => {
+    onSubmit: async (x: FormValues) => {
       try {
         return await submitFx(x);
       } catch (e) {
@@ -43,36 +35,20 @@ const createForm = <FormValues, T extends FormSubscription>(
     finalForm.mutators.__update__();
   });
 
-  const { $fields, $registeredFields, fieldsApi } = createFields<FormValues>({ finalForm });
   const { $formState, formStateApi } = createFormState<FormValues, T>({
     finalForm,
     subscribeOn,
   });
 
-  const baseApi = createApi<FormValues, T>({ finalForm, fieldsApi, formStateApi });
-
-  // we need an error in field on start (like in form state)
-  revalidateFx();
-
-  const setValidationFn = (fn: Parameters<typeof validateFx.use>[0]) => {
-    validateFx.use(fn);
-    revalidateFx();
-  };
-
-  const setSubmitFn = (fn: Parameters<typeof submitFx.use>[0]) => {
-    submitFx.use(fn);
-  };
+  const baseApi = createApi<FormValues, T>({ finalForm, formStateApi, revalidateFx });
 
   return {
     api: {
       ...baseApi,
       revalidateFx,
-      setSubmitFn,
-      setValidationFn,
+      setSubmitFn: submitFx.use,
     },
-    $fields,
     $formState,
-    $registeredFields,
   };
 };
 

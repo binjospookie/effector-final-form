@@ -5,23 +5,23 @@ import { createForm } from '../../index';
 const onSubmitMock = () => {};
 
 describe('api.restart', () => {
-  test('with initialValues', async () => {
-    const { $fields, api, $formState } = createForm({
+  test('base', async () => {
+    const { api, $formState } = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
-      initialValues: { firstName: '' },
       subscribeOn: ['values', 'initialValues', 'errors'],
-      validate: (f) => {
-        if (f?.firstName === undefined) {
-          return { firstName: 'error' };
-        }
-      },
+    });
+
+    const field = api.registerField({
+      name: 'firstName',
+      subscribeOn: ['value'],
+      initialValue: '',
+      validate: (v) => (v === undefined ? 'error' : undefined),
     });
 
     {
-      api.registerField({ name: 'firstName', subscribeOn: ['value'] });
-      await api.changeFx({ name: 'firstName', value: undefined });
+      await field.api.changeFx(undefined);
 
-      expect($fields.getState().firstName.value).toBe(undefined);
+      expect(field.$state.getState().value).toBe(undefined);
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'error' });
       });
@@ -30,38 +30,7 @@ describe('api.restart', () => {
     {
       await api.restart();
 
-      expect($fields.getState().firstName.value).toBe('');
-
-      await waitForExpect(() => {
-        expect($formState.getState().errors).toStrictEqual({});
-      });
-    }
-  });
-  test('with initialValues', async () => {
-    const { $fields, api, $formState } = createForm<{ firstName: string }, ['values', 'initialValues', 'errors']>({
-      onSubmit: onSubmitMock,
-      subscribeOn: ['values', 'initialValues', 'errors'],
-      validate: (f) => {
-        if (f?.firstName === 'John') {
-          return { firstName: 'error' };
-        }
-      },
-    });
-
-    {
-      api.registerField({ name: 'firstName', subscribeOn: ['value'] });
-      api.changeFx({ name: 'firstName', value: 'John' });
-
-      expect($fields.getState().firstName.value).toBe('John');
-      await waitForExpect(() => {
-        expect($formState.getState().errors).toStrictEqual({ firstName: 'error' });
-      });
-    }
-
-    {
-      await api.restart();
-
-      expect($fields.getState().firstName.value).toBe(undefined);
+      expect(field.$state.getState().value).toBe('');
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({});

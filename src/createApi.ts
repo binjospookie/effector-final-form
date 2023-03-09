@@ -1,43 +1,102 @@
-import { createEffect } from 'effector';
+import { createEffect, createEvent, createStore, is, sample } from 'effector';
 import { fieldSubscriptionItems } from 'final-form';
 
-import { normalizeSubscriptions } from './utils';
+import { normalizeSubscriptions, pick } from './utils';
 
-import type { FormApi as FFFormApi } from 'final-form';
-import type { createFields } from './createFields';
+import type { Store } from 'effector';
+import type { FormApi as FFFormApi, FieldState as FFFieldState } from 'final-form';
 import type { createFormState } from './createFormState';
-import type { FormSubscription } from './types';
+import type { FormSubscription, ValidationResult } from './types';
+
+const baseValidator = <P>(_?: P) => undefined;
 
 const createApi = <FormValues, T extends FormSubscription>(config: {
   finalForm: FFFormApi<FormValues>;
-  fieldsApi: ReturnType<typeof createFields<FormValues>>['fieldsApi'];
   formStateApi: ReturnType<typeof createFormState<FormValues, T>>['formStateApi'];
+  revalidateFx: () => void;
 }) => {
-  const { finalForm, fieldsApi, formStateApi } = config;
+  const { finalForm, formStateApi, revalidateFx } = config;
 
   type Form = typeof finalForm;
   type FieldNames = keyof FormValues;
 
-  type ChangeConfig<T extends FieldNames> = { name: T; value?: FormValues[T] };
   type RegisterFieldParams = Parameters<Form['registerField']>;
-  type RegisterFieldConfig<T extends readonly (keyof RegisterFieldParams[2])[]> = {
+  type RegisterFieldConfig<P, T extends readonly (keyof RegisterFieldParams[2])[]> = {
     name: RegisterFieldParams[0];
     subscribeOn: T;
-    config?: RegisterFieldParams[3];
+    initialValue?: P | Store<P>;
+    validate?: (value?: P) => ValidationResult;
+    config?: Omit<NonNullable<RegisterFieldParams[3]>, 'initialValue' | 'getValidator'>;
   };
 
-  const changeHandler = ({ name, value }: ChangeConfig<FieldNames>) => finalForm.change(name, value);
-  const registerFieldHandler = <T extends readonly (keyof RegisterFieldParams[2])[]>({
+  const makeChangeHandler =
+    <T extends FieldNames>(name: T) =>
+    (value?: FormValues[T]) =>
+      finalForm.change(name, value);
+  const registerField = <
+    P,
+    T extends readonly (keyof RegisterFieldParams[2])[] = readonly (keyof RegisterFieldParams[2])[],
+  >({
     name,
     subscribeOn,
-    config,
-  }: RegisterFieldConfig<T>) => {
-    finalForm.registerField(
-      name,
-      fieldsApi.update,
-      normalizeSubscriptions(fieldSubscriptionItems, [...subscribeOn, 'value']),
-      config,
-    );
+    config = {},
+    initialValue,
+    validate,
+  }: RegisterFieldConfig<P, T>) => {
+    const validateFx = createEffect<P | undefined, ValidationResult>(validate ?? baseValidator);
+
+    const parsedConfig = {
+      ...config,
+      initialValue: is.store(initialValue) ? initialValue.getState() : initialValue,
+      getValidator: (_?: P) => validateFx,
+    };
+
+    type State = Pick<FFFieldState<P>, 'value' | (typeof subscribeOn)[number]>;
+
+    const subscriber = createEvent<any>();
+
+    finalForm.batch(() => {
+      finalForm.registerField(
+        name,
+        subscriber,
+        normalizeSubscriptions(fieldSubscriptionItems, [...subscribeOn, 'value']),
+        // @ts-expect-error
+        parsedConfig,
+      );
+
+      revalidateFx();
+    });
+
+    // @ts-expect-error
+    const normalizedState = pick([...subscribeOn, 'value'], finalForm.getFieldState(name));
+    const $state = createStore<State>(normalizedState as unknown as State);
+
+    sample({
+      clock: subscriber.filterMap(({ blur, change, focus, ...rest }) => (rest.name === name ? rest : undefined)),
+      target: $state,
+    });
+
+    const changeHandler = makeChangeHandler(name);
+
+    const api = {
+      blurFx: createEffect(() => {
+        finalForm.blur(name);
+      }),
+      changeFx: createEffect(changeHandler),
+      focusFx: createEffect(() => {
+        finalForm.focus(name);
+      }),
+      resetState: createEffect(() => {
+        finalForm.resetFieldState(name);
+      }),
+      setValidationFn: (fn: Required<typeof validate>) => {
+        // @ts-expect-error 123
+        validateFx.use(fn);
+        revalidateFx();
+      },
+    };
+
+    return { api, $state };
   };
 
   const pauseValidationHandler = () => {
@@ -50,17 +109,12 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
   };
 
   const api = {
-    blurFx: createEffect(finalForm.blur),
-    changeFx: createEffect(changeHandler),
-    focusFx: createEffect(finalForm.focus),
-    initialize: createEffect(finalForm.initialize),
-    pauseValidation: createEffect(pauseValidationHandler),
-    registerField: createEffect(registerFieldHandler),
-    reset: createEffect(finalForm.reset),
-    resetFieldState: createEffect(finalForm.resetFieldState),
-    restart: createEffect(finalForm.restart),
-    resumeValidation: createEffect(resumeValidationHandler),
-    submitFx: createEffect(finalForm.submit),
+    pauseValidation: createEffect(pauseValidationHandler), // form api
+    registerField, // form api
+    reset: createEffect(finalForm.reset), // form api
+    restart: createEffect(finalForm.restart), // form api
+    resumeValidation: createEffect(resumeValidationHandler), // form api
+    submitFx: createEffect(finalForm.submit), // form api
   };
 
   return api;

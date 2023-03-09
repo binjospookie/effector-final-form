@@ -3,38 +3,38 @@ import { createForm } from '../../index';
 const onSubmitMock = () => {};
 
 describe('api.blur_focus', () => {
-  const { $formState, $fields, api } = createForm({
+  const { $formState, api } = createForm<{ firstName: string }>({
     onSubmit: onSubmitMock,
-    initialValues: { firstName: '' },
+
     subscribeOn: ['active'],
   });
 
+  const field = api.registerField({
+    name: 'firstName',
+    subscribeOn: ['active'],
+    initialValue: '',
+  });
+
   test('api.focusFx', async () => {
-    {
-      await api.registerField({ name: 'firstName', subscribeOn: ['active'] });
+    expect($formState.getState().active).toBe(null);
+    expect(field.$state.getState().active).toBe(false);
 
-      expect($formState.getState().active).toBe(null);
-      expect($fields.getState().firstName.active).toBe(false);
-    }
+    await field.api.focusFx();
 
-    {
-      await api.focusFx('firstName');
-
-      expect($formState.getState().active).toBe('firstName');
-      expect($fields.getState().firstName.active).toBe(true);
-    }
+    expect($formState.getState().active).toBe('firstName');
+    expect(field.$state.getState().active).toBe(true);
   });
 
   test('api.blurFx', async () => {
     {
       expect($formState.getState().active).toBe('firstName');
-      expect($fields.getState().firstName.active).toBe(true);
+      expect(field.$state.getState().active).toBe(true);
     }
 
     {
-      await api.blurFx('firstName');
+      await field.api.blurFx();
       expect($formState.getState().active).toBe(null);
-      expect($fields.getState().firstName?.active).toBe(false);
+      expect(field.$state.getState().active).toBe(false);
     }
   });
 });

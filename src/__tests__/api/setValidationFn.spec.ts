@@ -6,35 +6,34 @@ const onSubmitMock = () => {};
 
 describe('api.setValidationFn', () => {
   test('', async () => {
-    const { $formState, api, $fields } = createForm({
+    const { $formState, api } = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
-      initialValues: { firstName: 'John' },
       subscribeOn: ['values', 'errors'],
-      validate: (f) => {
-        if (f?.firstName === 'Bob') {
-          return { firstName: 'Error' };
-        }
-      },
     });
 
-    await api.registerField({ name: 'firstName', subscribeOn: ['error'] });
+    const field = api.registerField({
+      name: 'firstName',
+      subscribeOn: ['error'],
+      initialValue: 'John',
+      validate: (v) => (v === 'Bob' ? 'Error' : undefined),
+    });
 
     {
-      api.focusFx('firstName');
-      await api.changeFx({ name: 'firstName', value: 'Bob' });
+      field.api.focusFx();
+      await field.api.changeFx('Bob');
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
-        expect($fields.getState().firstName.error).toBe('Error');
+        expect(field.$state.getState().error).toBe('Error');
       });
     }
 
     {
-      api.setValidationFn(() => ({ firstName: 'New validation error' }));
+      field.api.setValidationFn(() => 'New validation error');
 
       await waitForExpect(() => {
         expect($formState.getState().errors).toStrictEqual({ firstName: 'New validation error' });
-        expect($fields.getState().firstName.error).toBe('New validation error');
+        expect(field.$state.getState().error).toBe('New validation error');
       });
     }
   });

@@ -12,9 +12,8 @@ In the _Final Form_ you can do most things using `form`.
 _effector-final-form_ provides several entities:
 
 ```ts
-const { $formState, api, $fields, $registeredFields } = createForm({
+const { $formState, api } = createForm<{ firstName: string }>({
   onSubmit: onSubmitMock,
-  initialValues: { firstName: 'John' },
   subscribeOn: ['initialValues', 'values'],
 });
 ```
@@ -59,7 +58,7 @@ const validationFx = attach(() => {
 setError('Incorrect value');
 ```
 
-## `api.setValidationFn`
+## `field.api.setValidationFn`
 
 Not presented in Final Form.
 
@@ -73,7 +72,22 @@ Allows you to dynamically set submit function. Uses `effect.use` under the hood.
 
 ## `createForm.initialValues`
 
-You can pass undefined, `KV` object or `Store<KV>`.
+You can not pass undefined initial values in `createForm`.
+But it is possible to provide them on `api.registerField`.
+
+```ts
+const form = createForm<{ name: string }>({
+  onSubmit: () => {},
+});
+
+form.api.registerField({
+  name: 'name',
+  // highlight-next-line
+  initialValue: 'John',
+  ...
+})
+
+```
 
 ## `form` & `field` subscriptions
 
@@ -86,7 +100,7 @@ Values not included in `subscribeOn` will be specified in the subscription with 
 In the _effector-final-form_ you **can not** create many `subscribers` with different `subscriptions`.
 
 ```ts
-const { api } = createForm<{ firstName: string }, ['initialValues', 'values']>({
+const { api } = createForm<{ firstName: string }>({
   onSubmit: onSubmitMock,
   // highlight-next-line
   subscribeOn: ['initialValues', 'values'],
@@ -121,7 +135,7 @@ In the _effector-final-form_ you **can not** set a `subscriber`.
 form.registerField('firstName', () => {}, { active: true }, config: { initialValue: 'John' });
 
 // effector-final-form
-api.registerField({name: 'firstName', subscribeOn: ['active'], config: { initialValue: 'John' } })
+api.registerField({name: 'firstName', subscribeOn: ['active'], initialValue: 'John' })
 ```
 
 ## `form.getState()`
@@ -150,22 +164,6 @@ const firstNameState = form.getFieldState('firstName');
 
 // effector-final-form
 const $firstName = $fields.map((fields) => fields.firstName);
-```
-
-## `form.getRegisteredFields()`
-
-:::caution You don't need this method!
-`getState()` gives rise to difficult to debug imperative code and kind of race condition. Prefer declarative [sample](https://effector.dev/docs/api/effector/sample) to pass data from store and attach for effects
-:::
-
-It is a way to get a list of all the currently registered fields.
-
-```ts
-// Final Form
-const fieldsList = form.getRegisteredFields();
-
-// effector-final-form
-const fieldsList = $registeredFields.getState();
 ```
 
 ## `form.subscribe()`

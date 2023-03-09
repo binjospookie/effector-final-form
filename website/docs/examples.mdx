@@ -15,33 +15,30 @@ const changeError = createEvent<string>();
 // highlight-next-line
 const $error = createStore<string>('error');
 const validationFx = attach({
-  effect: createEffect(({ fields, errorText }) => {
-    if (!fields?.firstName || fields.firstName === '') {
+  effect: createEffect(({ value, errorText }) => {
+    if (!value || value === '') {
       return { firstName: errorText };
     }
   }),
   source: $error,
-  mapParams: (fields, errorText) => ({ fields, errorText }),
+  mapParams: (value, errorText) => ({ value, errorText }),
 });
 
 sample({ clock: changeError, target: $error });
 
-const { $formState, api, $fields } = createForm({
+const { $formState, api, $fields } = createForm<{ firstName: string; lastName: string }>({
   onSubmit: () => {},
-  // highlight-next-line
-  // validate: validationFx, // it is possible to setup dynamic validator in cofig
-  initialValues: { firstName: '', lastName: '' },
   subscribeOn: ['errors'],
 });
 
-api.registerField({ name: 'firstName', subscribeOn: ['error'] });
-api.registerField({ name: 'lastName', subscribeOn: ['error'] });
+const firstNameField = api.registerField({ name: 'firstName', subscribeOn: ['error'] });
+const lastNameField = api.registerField({ name: 'lastName', subscribeOn: ['error'] });
 
 // highlight-next-line
 sample({ clock: changeError, target: api.reValidateFx });
 
 // highlight-next-line
-api.setValidationFn(validationFx);
+firstNameField.api.setValidationFn(validationFx);
 // formState.errors = { firstName: 'error' }
 // firstName.error = 'error'
 // lastName.error = undefined

@@ -4,52 +4,46 @@ import { createForm } from '../../index';
 
 describe('api.resetFieldState', () => {
   test('', async () => {
-    const { $fields, api } = createForm<{ firstName: [string] }, ['values']>({
+    const { api } = createForm<{ firstName: [string] }>({
       onSubmit: () => ({ firstName: 'Submit Error' }),
       subscribeOn: ['values'],
-      validate: (f) => {
-        if (f.firstName && f.firstName[0] === 'John') {
-          return { firstName: 'StaticError' };
-        }
-      },
+    });
+
+    const field = api.registerField<string[]>({
+      name: 'firstName',
+      subscribeOn: [
+        'submitError',
+        'active',
+        'dirty',
+        'dirtySinceLastSubmit',
+        'error',
+        'initial',
+        'invalid',
+        'length',
+        'modified',
+        'modifiedSinceLastSubmit',
+        'pristine',
+        'submitFailed',
+        'submitSucceeded',
+        'submitting',
+        'touched',
+        'valid',
+        'validating',
+        'value',
+        'visited',
+      ],
+      validate: (v) => (v && v[0] === 'John' ? 'StaticError' : undefined),
     });
 
     {
-      api.registerField({
-        name: 'firstName',
-        subscribeOn: [
-          'submitError',
-          'active',
-          'dirty',
-          'dirtySinceLastSubmit',
-          'error',
-          'initial',
-          'invalid',
-          'length',
-          'modified',
-          'modifiedSinceLastSubmit',
-          'pristine',
-          'submitFailed',
-          'submitSucceeded',
-          'submitting',
-          'touched',
-          'valid',
-          'validating',
-          'value',
-          'visited',
-        ],
-      });
+      await field.api.focusFx();
 
-      await api.focusFx('firstName');
-
-      await api.blurFx('firstName');
-      await api.focusFx('firstName');
-      await api.changeFx({ name: 'firstName', value: ['John'] });
+      await field.api.blurFx();
+      await field.api.focusFx();
+      await field.api.changeFx(['John']);
 
       await waitForExpect(() => {
-        const { blur, change, data, focus, ...state } = $fields.getState().firstName;
-
-        expect(state).toStrictEqual({
+        expect(field.$state.getState()).toStrictEqual({
           active: true,
           dirty: true,
           dirtySinceLastSubmit: false,
@@ -75,50 +69,50 @@ describe('api.resetFieldState', () => {
     }
 
     {
-      await api.changeFx({ name: 'firstName', value: ['Doe'] });
+      await field.api.changeFx(['Doe']);
       await waitForExpect(() => {
-        expect($fields.getState().firstName.value).toStrictEqual(['Doe']);
+        expect(field.$state.getState().value).toStrictEqual(['Doe']);
       });
 
       await api.submitFx();
       await waitForExpect(() => {
-        expect($fields.getState().firstName.submitError).toBe('Submit Error');
+        expect(field.$state.getState().submitError).toBe('Submit Error');
       });
     }
 
     {
-      await api.changeFx({ name: 'firstName', value: [''] });
+      await field.api.changeFx(['']);
 
-      expect($fields.getState().firstName.modifiedSinceLastSubmit).toBe(true);
-      expect($fields.getState().firstName.dirtySinceLastSubmit).toBe(true);
+      expect(field.$state.getState().modifiedSinceLastSubmit).toBe(true);
+      expect(field.$state.getState().dirtySinceLastSubmit).toBe(true);
     }
 
     {
-      api.resetFieldState('firstName');
+      field.api.resetState();
 
-      const { blur, change, data, focus, ...state } = $fields.getState().firstName;
-
-      expect(state).toStrictEqual({
-        active: false,
-        dirty: true,
-        dirtySinceLastSubmit: true,
-        error: undefined,
-        initial: undefined,
-        invalid: true,
-        length: 1,
-        modified: false,
-        modifiedSinceLastSubmit: true,
-        name: 'firstName',
-        pristine: false,
-        submitError: 'Submit Error',
-        submitFailed: true,
-        submitSucceeded: false,
-        submitting: false,
-        touched: false,
-        valid: false,
-        validating: false,
-        value: [''],
-        visited: false,
+      await waitForExpect(() => {
+        expect(field.$state.getState()).toStrictEqual({
+          active: false,
+          dirty: true,
+          dirtySinceLastSubmit: true,
+          error: undefined,
+          initial: undefined,
+          invalid: true,
+          length: 1,
+          modified: false,
+          modifiedSinceLastSubmit: true,
+          name: 'firstName',
+          pristine: false,
+          submitError: 'Submit Error',
+          submitFailed: true,
+          submitSucceeded: false,
+          submitting: false,
+          touched: false,
+          valid: false,
+          validating: false,
+          value: [''],
+          visited: false,
+        });
       });
     }
   });

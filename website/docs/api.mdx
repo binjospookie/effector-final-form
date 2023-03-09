@@ -6,7 +6,9 @@ title: API
 The description of some of the functions is taken from the [Final Form documentation](https://final-form.org/docs/final-form/types/FormAp)
 :::
 
-## createForm
+## Form
+
+### createForm
 
 Form creation function.
 
@@ -18,94 +20,18 @@ Takes the same [config](https://final-form.org/docs/final-form/types/Config) as 
 Returns:
 
 - [api](docs/api#api)
-- [$fields](docs/api#fields)
 - [$formState](docs/api#formstate)
-- [$registeredFields](docs/api#registeredfields)
 
-```ts title="With initial values"
-const { api, $fields, $formState, $registeredFields } = createForm({
+```ts
+const { api, $formState } = createForm<{ firstName: string }>({
   onSubmit: async (f) => {
     await sleep(1000);
 
     return f.firstName === 'Incorrect' ? { firstName: 'Submit Error' } : undefined;
   },
-  validate: (f) => (f.firstName === '' ? { firstName: 'Can not be empty' } : undefined),
-  initialValues: { firstName: '' },
   subscribeOn: ['values', 'errors', 'submitting', 'submitSucceeded', 'submitFailed', 'submitErrors'],
+  // like config from Final Form with omited 'debug' | 'initialValues' | 'validate'
 });
-```
-
-```ts title="With initial values as $"
-const $initialValues = createStore({ firstName: '' });
-
-const { api, $fields, $formState, $registeredFields } = createForm({
-  onSubmit: async (f) => {
-    await sleep(1000);
-
-    return f.firstName === 'Incorrect' ? { firstName: 'Submit Error' } : undefined;
-  },
-  validate: (f) => (f.firstName === '' ? { firstName: 'Can not be empty' } : undefined),
-  initialValues: $initialValues,
-  subscribeOn: ['values', 'errors', 'submitting', 'submitSucceeded', 'submitFailed', 'submitErrors'],
-});
-```
-
-```ts title="Without initial values"
-const subscribeOn = [
-  'values',
-  'errors',
-  'submitting',
-  'submitSucceeded',
-  'submitFailed',
-  'submitErrors',
-] as const;
-
-const { api, $fields, $formState, $registeredFields } = createForm<{
-    firstName: string,
-    typeof subscribeOn
-}>({
-  onSubmit: async (f) => {
-    await sleep(1000);
-
-    return f.firstName === 'Incorrect' ? { firstName: 'Submit Error' } : undefined;
-  },
-  validate: (f) => (f.firstName === '' ? { firstName: 'Can not be empty' } : undefined),
-  subscribeOn: ['values', 'errors', 'submitting', 'submitSucceeded', 'submitFailed', 'submitErrors'],
-});
-```
-
-## api
-
-### blurFx
-
-Blurs (marks inactive) the given field.
-
-```ts
-(name: string) => Promise<void>;
-```
-
-### changeFx
-
-Changes the value of the given field.
-
-```ts
-<F extends keyof FormValues>(_: { name: F; value?: FormValues[F] }) => Promise<void>;
-```
-
-### focusFx
-
-Focuses (marks active) the given field.
-
-```ts
-(name: string) => Promise<void>;
-```
-
-### initialize
-
-Initializes the form to the values provided. All the values will be set to these values, and dirty and pristine will be calculated by performing a shallow-equals between the current values and the values last initialized with. The form will be pristine after this call.
-
-```ts
-(data: InitialFormValues | ((values: FormValues) => InitialFormValues)) => void
 ```
 
 ### pauseValidation
@@ -120,40 +46,26 @@ If called, validation will be paused until resumeValidation() is called.
 
 Registers a new field.
 
-```ts
-(_: { name: string; subscribeOn: string[]; config?: FieldConfig }) => Promise<Unsubscribe>;
+```ts title="Example"
+const form = createForm<{ name: string }>({ onSubmit: () => {}, subscribe: ['active'] });
+
+const field = form.api.registerField({
+  name: 'firstName',
+  subscribeOn: ['value'],
+  initialValue: 'defaultValue', // Optional. or Store with a value
+  validate: (x) => (x === 'Steve' ? 'Error' : undefined), // Optional.
+  // config?: like config from Final Form with omited 'initialValue' | 'getValidator'
+});
 ```
 
-### reset
+### setSubmitFn
 
-Resets the values back to the initial values the form was initialized with. Or empties all the values if the form was not initialized. If you provide initialValues they will be used as the new initial values.
+Not presented in Final Form.
 
-```ts
-(initialValues: ?InitialFormValues) => Promise<void>;
-```
-
-### resetFieldState
-
-Resets all of a field's flags (e.g. touched, visited, etc.) to their initial state.
+Allows you to dynamically set submit function. Uses `effect.use` under the hood.
 
 ```ts
-(name: string) => Promise<void>;
-```
-
-### restart
-
-Resets all form and field state. Same as calling reset(initialValues) on the form and resetFieldState() for each field. Form should be just as it was when it was first created.
-
-```ts
-(initialValues: ?InitialFormValues) => Promise<void>;
-```
-
-### resumeValidation
-
-Resumes validation paused by pauseValidation(). If validation was blocked while it was paused, validation will be run.
-
-```ts
-() => Promise<void>;
+(_: (values: FormValues) => Promise<SubmissionErrors | void>) => void
 ```
 
 ### revalidateFx
@@ -183,24 +95,28 @@ const validationFx = attach(() => {
 setError('Incorrect value');
 ```
 
-### setSubmitFn
+### reset
 
-Not presented in Final Form.
-
-Allows you to dynamically set submit function. Uses `effect.use` under the hood.
+Resets the values back to the initial values the form was initialized with. Or empties all the values if the form was not initialized. If you provide initialValues they will be used as the new initial values.
 
 ```ts
-(_: (values: FormValues) => Promise<SubmissionErrors | void>) => void
+(initialValues: ?InitialFormValues) => Promise<void>;
 ```
 
-### setValidationFn
+### restart
 
-Not presented in Final Form.
-
-Allows you to dynamically set validation function. Uses `effect.use` under the hood.
+Resets all form and field state. Same as calling reset(initialValues) on the form and resetState() for each field. Form should be just as it was when it was first created.
 
 ```ts
-(_: (params: FormValues) => Promise<SubmissionErrors | void>) => void
+(initialValues: ?InitialFormValues) => Promise<void>;
+```
+
+### resumeValidation
+
+Resumes validation paused by pauseValidation(). If validation was blocked while it was paused, validation will be run.
+
+```ts
+() => Promise<void>;
 ```
 
 ### submitFx
@@ -211,9 +127,7 @@ Submits the form if there are currently no validation errors. It may return unde
 () => Promise<Object | undefined | void>;
 ```
 
-## $fields
-
-## $formState
+### $formState
 
 It is a _Store_ that stores the form state. The keys are taken from `subscribeOn` + `isValidationOnPause`
 
@@ -227,22 +141,46 @@ const { $formState } = createForm({
 $formState.getState(); // { active: null, errors: {}, isValidationPaused: false }
 ```
 
-## $registeredFields
+## Field
 
-It is a _Store_ that stores a list of names of registered fields.
+### blurFx
 
-```ts title="Example"
-const { $registeredFields, api } = createForm({
-  onSubmit: () => {},
-  initialValues: { firstName: '' },
-  subscribeOn: ['active'],
-});
+Blurs (marks inactive) the given field.
 
-$registeredFields.getState(); // []
+```ts
+() => Promise<void>;
+```
 
-api.registerField({ name: 'firstName', subscribeOn: ['value'] });
-$registeredFields.getState(); // ['firstName']
+### changeFx
 
-api.registerField({ name: 'lastName', subscribeOn: ['value'] });
-$registeredFields.getState(); // ['firstName', 'lastName']
+Changes the value of the given field.
+
+```ts
+<F extends keyof FormValues>(value?: FormValues[F]) => Promise<void>;
+```
+
+### focusFx
+
+Focuses (marks active) the given field.
+
+```ts
+() => Promise<void>;
+```
+
+### resetState
+
+Resets all of a field's flags (e.g. touched, visited, etc.) to their initial state.
+
+```ts
+(name: string) => Promise<void>;
+```
+
+### setValidationFn
+
+Not presented in Final Form.
+
+Allows you to dynamically set validation function. Uses `effect.use` under the hood.
+
+```ts
+(_: (params: FormValues) => Promise<SubmissionErrors | void>) => void
 ```
