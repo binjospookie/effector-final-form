@@ -4,9 +4,45 @@ title: Examples
 
 ## Base
 
-```ts file=../../src/__tests__/examples/base.spec.ts
+```ts
+import { createForm } from 'effector-final-form';
 
+const form = createForm<{ login: string; password: string }>({
+  onSubmit: console.log,
+  subscribeOn: ['submitSucceeded', 'submitting'],
+});
+
+const loginField = form.api.registerField<string>({
+  name: 'login',
+  subscribeOn: ['value', 'error', 'validating'],
+  validate: (x) => (x?.length >= 3 ? undefined : 'Incorrect login'),
+});
+
+loginField.$state.watch(console.log);
+// {value: undefined, error: undefined, validating: true}
+// {name: "login", error: "Incorrect login", value: undefined, validating: false}
+
+const passwordField = form.api.registerField<string>({
+  name: 'password',
+  subscribeOn: ['value', 'error', 'validating'],
+  validate: (x) => (x?.length >= 3 ? undefined : 'Incorrect password'),
+});
+
+passwordField.$state.watch(console.log);
+// {value: undefined, error: undefined, validating: true}
+// {name: "password", error: "Incorrect password", value: undefined, validating: false}
+
+loginField.api.changeFx('John');
+// {name: "login", error: undefined, value: "John", validating: true}
+// {name: "login", error: undefined, value: "John", validating: false}
+passwordField.api.changeFx('secret');
+// {name: "password", error: undefined, value: "secret", validating: true}
+// {name: "password", error: undefined, value: "secret", validating: false}
+form.api.submitFx();
+// {login: "John", password: "secret"}
 ```
+
+[Try it](https://stackblitz.com/edit/typescript-5fydjc?file=index.ts)
 
 ## With dynamic validation
 
