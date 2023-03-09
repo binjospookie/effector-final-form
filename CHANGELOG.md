@@ -5,6 +5,22 @@ title: Change Log
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](http://semver.org).
 
+## 0.6.0
+
+### Added
+
+- `registerField` returns Store and api
+
+### Changed
+
+- form and field api
+
+### Removed
+
+- api.initialize
+- $registeredFields
+- $fields
+
 ## 0.4.0
 
 ### Removed
