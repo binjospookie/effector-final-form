@@ -1,4 +1,4 @@
-import { createEffect, is } from 'effector';
+import { createEffect } from 'effector';
 import { createForm as ffCreateForm } from 'final-form';
 
 import { createApi } from './createApi';
@@ -10,20 +10,17 @@ import type { FormSubscription } from './types';
 const baseValidator = () => undefined;
 
 const createForm = <FormValues, T extends FormSubscription>(
-  config: Omit<FFConfig<FormValues>, 'debug'> & {
+  config: Omit<FFConfig<FormValues>, 'debug' | 'initialValues'> & {
     subscribeOn: T;
   },
 ) => {
   const { subscribeOn, ...finalFormConfig } = config;
-
-  const initialValues = is.store(config.initialValues) ? config.initialValues.getState() : config.initialValues;
 
   const validateFx = createEffect(finalFormConfig.validate ?? baseValidator);
   const submitFx = createEffect(finalFormConfig.onSubmit);
 
   const finalForm = ffCreateForm({
     ...finalFormConfig,
-    initialValues,
     validate: validateFx,
     onSubmit: async (x) => {
       try {

@@ -3,13 +3,17 @@ import { createForm } from '../../index';
 const onSubmitMock = () => {};
 
 describe('api.blur_focus', () => {
-  const { $formState, api } = createForm({
+  const { $formState, api } = createForm<{ firstName: string }, ['active']>({
     onSubmit: onSubmitMock,
-    initialValues: { firstName: '' },
+
     subscribeOn: ['active'],
   });
 
-  const field = api.registerField({ name: 'firstName', subscribeOn: ['active'] });
+  const field = api.registerField({
+    name: 'firstName',
+    subscribeOn: ['active'],
+    config: { initialValue: '' },
+  });
 
   test('api.focusFx', async () => {
     expect($formState.getState().active).toBe(null);

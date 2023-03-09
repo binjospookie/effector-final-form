@@ -7,13 +7,22 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('api.submitFx', () => {
   test('', async () => {
-    const { $formState, api } = createForm({
+    const formSubscribeOn = [
+      'values',
+      'submitting',
+      'modifiedSinceLastSubmit',
+      'submitSucceeded',
+      'submitFailed',
+      'modifiedSinceLastSubmit',
+      'submitError',
+      'submitErrors',
+    ] as const;
+    const { $formState, api } = createForm<{ firstName: string }, typeof formSubscribeOn>({
       onSubmit: async (f) => {
         await sleep(1000);
 
         return f.firstName === '' ? { firstName: 'Submit Error' } : undefined;
       },
-      initialValues: { firstName: '' },
       subscribeOn: [
         'values',
         'submitting',
@@ -29,6 +38,7 @@ describe('api.submitFx', () => {
     const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['submitting', 'submitError', 'submitSucceeded', 'submitFailed', 'modifiedSinceLastSubmit'],
+      config: { initialValue: '' },
     });
 
     {

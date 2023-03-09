@@ -8,20 +8,28 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('example', () => {
   test('', async () => {
-    const { $formState, api } = createForm({
+    const formDependsOn = [
+      'values',
+      'errors',
+      'submitting',
+      'submitSucceeded',
+      'submitFailed',
+      'submitErrors',
+    ] as const;
+    const { $formState, api } = createForm<{ firstName: string }, typeof formDependsOn>({
       onSubmit: async (f) => {
         await sleep(1000);
 
         return f.firstName === 'Incorrect' ? { firstName: 'Submit Error' } : undefined;
       },
       validate: (f) => (f.firstName === '' ? { firstName: 'Can not be empty' } : undefined),
-      initialValues: { firstName: '' },
       subscribeOn: ['values', 'errors', 'submitting', 'submitSucceeded', 'submitFailed', 'submitErrors'],
     });
 
     const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['value', 'error', 'initial'],
+      config: { initialValue: '' },
     });
 
     field.api.changeFx('');

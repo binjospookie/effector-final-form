@@ -4,9 +4,11 @@ import { createForm } from '../index';
 
 describe('formStateNullable', () => {
   test('', async () => {
-    const { $formState, api } = createForm({
+    const { $formState, api } = createForm<
+      { firstName: string },
+      ['active', 'errors', 'modified', 'submitErrors', 'touched', 'visited']
+    >({
       onSubmit: () => ({ firstName: 'Submit Error' }),
-      initialValues: { firstName: 'John' },
       subscribeOn: ['active', 'errors', 'modified', 'submitErrors', 'touched', 'visited'],
       validate: (f) => (f.firstName === 'Bob' ? { firstName: 'Error' } : undefined),
     });
@@ -20,7 +22,7 @@ describe('formStateNullable', () => {
       expect($formState.getState().visited).toStrictEqual({});
     }
 
-    const field = api.registerField({ name: 'firstName', subscribeOn: [] });
+    const field = api.registerField({ name: 'firstName', subscribeOn: [], config: { initialValue: 'John' } });
 
     {
       await field.api.focusFx();

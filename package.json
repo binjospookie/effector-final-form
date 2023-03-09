@@ -23,7 +23,7 @@
   },
   "scripts": {
     "build": "vite build --mode production",
-    "prepublishOnly": "rm -rf ./package && clean-publish",
+    "prepublishOnly": "rm -rf ./package && pnpm build && clean-publish",
     "postpublish": "rm -rf ./package",
     "test": "vitest"
   },

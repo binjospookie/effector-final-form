@@ -1,7 +1,7 @@
-import { createEffect, createEvent, createStore, guard, sample } from 'effector';
+import { createEffect, createEvent, createStore, is, sample, Store } from 'effector';
 import { FieldState, fieldSubscriptionItems } from 'final-form';
 
-import { normalizeSubscriptions } from './utils';
+import { normalizeSubscriptions, pick } from './utils';
 
 import type { FormApi as FFFormApi } from 'final-form';
 import type { createFormState } from './createFormState';
@@ -17,23 +17,30 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
   type FieldNames = keyof FormValues;
 
   type RegisterFieldParams = Parameters<Form['registerField']>;
-  type RegisterFieldConfig<T extends readonly (keyof RegisterFieldParams[2])[]> = {
+  type RegisterFieldConfig<P, T extends readonly (keyof RegisterFieldParams[2])[]> = {
     name: RegisterFieldParams[0];
     subscribeOn: T;
-    config?: RegisterFieldParams[3];
+    config?: Omit<RegisterFieldParams[3], 'initialValue'> & {
+      initialValue?: P | Store<P>;
+    };
   };
 
   const makeChangeHandler =
     <T extends FieldNames>(name: T) =>
     (value?: FormValues[T]) =>
       finalForm.change(name, value);
-  const registerField = <T extends readonly (keyof RegisterFieldParams[2])[]>({
+  const registerField = <P, T extends readonly (keyof RegisterFieldParams[2])[]>({
     name,
     subscribeOn,
-    config,
-  }: RegisterFieldConfig<T>) => {
-    // fixme: correct type of field [from config initial or Generic]
-    type State = Pick<FieldState<string>, 'value' | (typeof subscribeOn)[number]>;
+    config = {},
+  }: RegisterFieldConfig<P, T>) => {
+    const { initialValue, ...restConfig } = config;
+    const parsedConfig = {
+      ...restConfig,
+      initialValue: is.store(initialValue) ? initialValue.getState() : initialValue,
+    };
+
+    type State = Pick<FieldState<P>, 'value' | (typeof subscribeOn)[number]>;
 
     const subscriber = createEvent<any>();
 
@@ -41,11 +48,13 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
       name,
       subscriber,
       normalizeSubscriptions(fieldSubscriptionItems, [...subscribeOn, 'value']),
-      config,
+      parsedConfig,
     );
 
+    // @ts-expect-error
+    const normalizedState = pick([...subscribeOn, 'value'], finalForm.getFieldState(name));
     // fixme: remove keys that not presented in subscribeOn
-    const $state = createStore<State>(finalForm.getFieldState(name) as unknown as State);
+    const $state = createStore<State>(normalizedState as unknown as State);
 
     sample({
       clock: subscriber.filterMap(({ blur, change, focus, ...rest }) => (rest.name === name ? rest : undefined)),
@@ -80,12 +89,12 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
   };
 
   const api = {
-    initialize: createEffect(finalForm.initialize), // form api
     pauseValidation: createEffect(pauseValidationHandler), // form api
+    resumeValidation: createEffect(resumeValidationHandler), // form api
+
     registerField, // form api
     reset: createEffect(finalForm.reset), // form api
     restart: createEffect(finalForm.restart), // form api
-    resumeValidation: createEffect(resumeValidationHandler), // form api
     submitFx: createEffect(finalForm.submit), // form api
   };
 

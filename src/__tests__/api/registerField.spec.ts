@@ -1,9 +1,11 @@
+import { createStore } from 'effector';
+
 import { createForm } from '../../index';
 
 const onSubmitMock = () => {};
 
 describe('api.registerField', () => {
-  test('without initialValues', async () => {
+  test('with base value', async () => {
     const { $formState, api } = createForm<{ firstName: string }, ['values']>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values'],
@@ -12,26 +14,27 @@ describe('api.registerField', () => {
     const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['value'],
-      config: { defaultValue: 'defaultValue' },
+      config: { initialValue: 'defaultValue' },
     });
 
     expect($formState.getState().values).toStrictEqual({ firstName: 'defaultValue' });
     expect(field.$state.getState().value).toBe('defaultValue');
   });
 
-  test('with initialValues', async () => {
-    const { $formState, api } = createForm({
+  test('with value from $', async () => {
+    const $initialValue = createStore('defaultValue');
+
+    const { $formState, api } = createForm<{ firstName: string }, ['values']>({
       onSubmit: onSubmitMock,
-      initialValues: { firstName: '' },
       subscribeOn: ['values'],
     });
 
     const field = api.registerField({
       name: 'firstName',
       subscribeOn: ['value'],
-      config: { defaultValue: 'defaultValue' },
+      config: { initialValue: $initialValue },
     });
-    expect($formState.getState().values).toStrictEqual({ firstName: '' });
-    expect(field.$state.getState().value).toBe('');
+    expect($formState.getState().values).toStrictEqual({ firstName: 'defaultValue' });
+    expect(field.$state.getState().value).toBe('defaultValue');
   });
 });

@@ -6,9 +6,8 @@ const onSubmitMock = () => {};
 
 describe('api.setValidationFn', () => {
   test('', async () => {
-    const { $formState, api } = createForm({
+    const { $formState, api } = createForm<{ firstName: string }, ['values', 'errors']>({
       onSubmit: onSubmitMock,
-      initialValues: { firstName: 'John' },
       subscribeOn: ['values', 'errors'],
       validate: (f) => {
         if (f?.firstName === 'Bob') {
@@ -17,7 +16,11 @@ describe('api.setValidationFn', () => {
       },
     });
 
-    const field = api.registerField({ name: 'firstName', subscribeOn: ['error'] });
+    const field = api.registerField({
+      name: 'firstName',
+      subscribeOn: ['error'],
+      config: { initialValue: 'John' },
+    });
 
     {
       field.api.focusFx();
