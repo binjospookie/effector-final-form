@@ -4,10 +4,7 @@ import { createForm } from '../index';
 
 describe('formStateNullable', () => {
   test('', async () => {
-    const { $formState, api } = createForm<
-      { firstName: string },
-      ['active', 'errors', 'modified', 'submitErrors', 'touched', 'visited']
-    >({
+    const { $formState, api } = createForm<{ firstName: string }>({
       onSubmit: () => ({ firstName: 'Submit Error' }),
       subscribeOn: ['active', 'errors', 'modified', 'submitErrors', 'touched', 'visited'],
     });

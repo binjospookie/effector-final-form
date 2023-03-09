@@ -7,17 +7,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('api.submitFx', () => {
   test('', async () => {
-    const formSubscribeOn = [
-      'values',
-      'submitting',
-      'modifiedSinceLastSubmit',
-      'submitSucceeded',
-      'submitFailed',
-      'modifiedSinceLastSubmit',
-      'submitError',
-      'submitErrors',
-    ] as const;
-    const { $formState, api } = createForm<{ firstName: string }, typeof formSubscribeOn>({
+    const { $formState, api } = createForm<{ firstName: string }>({
       onSubmit: async (f) => {
         await sleep(1000);
 

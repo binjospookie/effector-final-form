@@ -7,7 +7,7 @@ import { createFormState } from './createFormState';
 import type { Config as FFConfig } from 'final-form';
 import type { FormSubscription } from './types';
 
-const createForm = <FormValues, T extends FormSubscription>(
+const createForm = <FormValues extends {}, T extends FormSubscription = FormSubscription>(
   config: Omit<FFConfig<FormValues>, 'debug' | 'initialValues' | 'validate'> & {
     subscribeOn: T;
   },

@@ -4,7 +4,7 @@ import { createForm } from '../../index';
 
 describe('api.resetFieldState', () => {
   test('', async () => {
-    const { api } = createForm<{ firstName: [string] }, ['values']>({
+    const { api } = createForm<{ firstName: [string] }>({
       onSubmit: () => ({ firstName: 'Submit Error' }),
       subscribeOn: ['values'],
     });

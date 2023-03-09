@@ -4,7 +4,7 @@ const onSubmitMock = () => {};
 
 describe('api.reset', () => {
   test('base', async () => {
-    const { api } = createForm<{ firstName: string; lastName: string }, ['values', 'initialValues']>({
+    const { api } = createForm<{ firstName: string; lastName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'initialValues'],
     });

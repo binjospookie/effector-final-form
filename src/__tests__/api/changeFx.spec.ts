@@ -4,7 +4,7 @@ const onSubmitMock = () => {};
 
 describe('api.changeFx', () => {
   test('without initialValues', async () => {
-    const { $formState, api } = createForm<{ firstName: string }, ['values']>({
+    const { $formState, api } = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values'],
     });

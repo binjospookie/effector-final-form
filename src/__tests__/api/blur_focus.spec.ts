@@ -3,7 +3,7 @@ import { createForm } from '../../index';
 const onSubmitMock = () => {};
 
 describe('api.blur_focus', () => {
-  const { $formState, api } = createForm<{ firstName: string }, ['active']>({
+  const { $formState, api } = createForm<{ firstName: string }>({
     onSubmit: onSubmitMock,
 
     subscribeOn: ['active'],

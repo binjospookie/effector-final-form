@@ -6,7 +6,7 @@ const onSubmitMock = () => {};
 
 describe('validateOnBlur', () => {
   test('', async () => {
-    const { $formState, api } = createForm<{ firstName: string }, ['values', 'errors']>({
+    const { $formState, api } = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'errors'],
       validateOnBlur: true,

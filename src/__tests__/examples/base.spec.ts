@@ -8,15 +8,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('example', () => {
   test('', async () => {
-    const formDependsOn = [
-      'values',
-      'errors',
-      'submitting',
-      'submitSucceeded',
-      'submitFailed',
-      'submitErrors',
-    ] as const;
-    const { $formState, api } = createForm<{ firstName: string }, typeof formDependsOn>({
+    const { $formState, api } = createForm<{ firstName: string }>({
       onSubmit: async (f) => {
         await sleep(1000);
 

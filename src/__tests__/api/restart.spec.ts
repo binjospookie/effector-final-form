@@ -6,7 +6,7 @@ const onSubmitMock = () => {};
 
 describe('api.restart', () => {
   test('base', async () => {
-    const { api, $formState } = createForm<{ firstName: string }, ['values', 'initialValues', 'errors']>({
+    const { api, $formState } = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'initialValues', 'errors'],
     });

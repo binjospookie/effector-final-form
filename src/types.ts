@@ -12,4 +12,6 @@ type Pick<O extends object, K extends Key> = O extends unknown ? _Pick<O, K> : n
 
 type FormSubscription = readonly (keyof FFFormSubscription)[];
 
-export type { FormSubscription, Pick, Nil };
+type ValidationResult = any | undefined | Promise<any> | Promise<undefined>;
+
+export type { FormSubscription, Pick, Nil, ValidationResult };

@@ -4,7 +4,7 @@ const onSubmitMock = () => {};
 
 describe('createForm', () => {
   test('without initial values', () => {
-    const { $formState } = createForm<{ firstName: string }, ['initialValues', 'values']>({
+    const { $formState } = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['initialValues', 'values'],
     });

@@ -6,7 +6,7 @@ const onSubmitMock = () => {};
 
 describe('api.registerField', () => {
   test('with base value', async () => {
-    const { $formState, api } = createForm<{ firstName: string }, ['values']>({
+    const { $formState, api } = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values'],
     });
@@ -24,7 +24,7 @@ describe('api.registerField', () => {
   test('with value from $', async () => {
     const $initialValue = createStore('defaultValue');
 
-    const { $formState, api } = createForm<{ firstName: string }, ['values']>({
+    const { $formState, api } = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values'],
     });
@@ -34,6 +34,7 @@ describe('api.registerField', () => {
       subscribeOn: ['value'],
       initialValue: $initialValue,
     });
+
     expect($formState.getState().values).toStrictEqual({ firstName: 'defaultValue' });
     expect(field.$state.getState().value).toBe('defaultValue');
   });
