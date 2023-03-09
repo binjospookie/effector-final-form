@@ -43,7 +43,7 @@ const loginField = form.api.registerField<string>({
 });
 
 loginField.$state.watch(console.log);
-// {value: undefined, error: undefined, validating: true}
+// {name: "login", value: undefined, error: undefined, validating: true}
 // {name: "login", error: "Incorrect login", value: undefined, validating: false}
 
 const passwordField = form.api.registerField<string>({
@@ -53,7 +53,7 @@ const passwordField = form.api.registerField<string>({
 });
 
 passwordField.$state.watch(console.log);
-// {value: undefined, error: undefined, validating: true}
+// {name: "password", value: undefined, error: undefined, validating: true}
 // {name: "password", error: "Incorrect password", value: undefined, validating: false}
 
 loginField.api.changeFx('John');
