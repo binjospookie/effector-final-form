@@ -69,7 +69,7 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
 
     // @ts-expect-error
     const normalizedState = pick([...subscribeOn, 'value'], finalForm.getFieldState(name));
-    const $state = createStore<State>(normalizedState as unknown as State);
+    const $state = createStore<State>({ ...normalizedState, name } as unknown as State);
 
     sample({
       clock: subscriber.filterMap(({ blur, change, focus, ...rest }) => (rest.name === name ? rest : undefined)),
