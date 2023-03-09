@@ -46,4 +46,24 @@ describe('createForm', () => {
       values: { firstName: 'John' },
     });
   });
+
+  test('with validation fn and $', () => {
+    const $initialValues = createStore({ firstName: 'John' });
+    const { $formState } = createForm({
+      onSubmit: onSubmitMock,
+      initialValues: $initialValues,
+      subscribeOn: ['initialValues', 'values'],
+      validate: (f) => {
+        if (f.firstName === '1') {
+          return { firstName: '' };
+        }
+      },
+    });
+
+    expect($formState.getState()).toStrictEqual({
+      initialValues: { firstName: 'John' },
+      isValidationPaused: false,
+      values: { firstName: 'John' },
+    });
+  });
 });
