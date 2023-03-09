@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org).
 
 ## 0.3.0
 
+### Removed
+
+- rollback 0.3.0 :c
+
+## 0.3.0
+
 ### Fixed
 
 - `validate` types 

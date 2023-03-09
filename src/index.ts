@@ -5,23 +5,14 @@ import { createApi } from './createApi';
 import { createFields } from './createFields';
 import { createFormState } from './createFormState';
 
-import type { Store } from 'effector';
-import type { Config as FFConfig, ValidationErrors as FFValidationErrors } from 'final-form';
+import type { Config as FFConfig } from 'final-form';
 import type { FormSubscription } from './types';
 
 const baseValidator = () => undefined;
 
-type ExtractKv<FormValues> = FormValues extends Store<infer S> ? S : FormValues;
-
-const createForm = <
-  FormValues,
-  T extends FormSubscription,
-  A = FormValues | Partial<FormValues> | Store<Partial<FormValues>> | Store<FormValues>,
->(
-  config: Omit<FFConfig<FormValues>, 'debug' | 'initialValues' | 'validate'> & {
+const createForm = <FormValues, T extends FormSubscription>(
+  config: Omit<FFConfig<FormValues>, 'debug'> & {
     subscribeOn: T;
-    initialValues?: A;
-    validate?: (values: ExtractKv<A>) => FFValidationErrors | Promise<FFValidationErrors>;
   },
 ) => {
   const { subscribeOn, ...finalFormConfig } = config;
@@ -37,7 +28,6 @@ const createForm = <
     validate: validateFx,
     onSubmit: async (x) => {
       try {
-        // @ts-expect-error
         return await submitFx(x);
       } catch (e) {
         return e;
@@ -53,15 +43,12 @@ const createForm = <
     finalForm.mutators.__update__();
   });
 
-  // @ts-expect-error
   const { $fields, $registeredFields, fieldsApi } = createFields<FormValues>({ finalForm });
   const { $formState, formStateApi } = createFormState<FormValues, T>({
-    // @ts-expect-error
     finalForm,
     subscribeOn,
   });
 
-  // @ts-expect-error
   const baseApi = createApi<FormValues, T>({ finalForm, fieldsApi, formStateApi });
 
   // we need an error in field on start (like in form state)
