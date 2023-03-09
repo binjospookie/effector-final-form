@@ -44,7 +44,7 @@ If called, validation will be paused until resumeValidation() is called.
 
 ### registerField
 
-Registers a new field.
+Registers a new field. Returns a field = $state (field state) and api for thid field.
 
 ```ts title="Example"
 const form = createForm<{ name: string }>({ onSubmit: () => {}, subscribe: ['active'] });
