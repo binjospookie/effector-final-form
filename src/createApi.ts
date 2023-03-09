@@ -1,9 +1,10 @@
-import { createEffect, createEvent, createStore, is, sample, Store } from 'effector';
-import { FieldState, fieldSubscriptionItems } from 'final-form';
+import { createEffect, createEvent, createStore, is, sample } from 'effector';
+import { fieldSubscriptionItems } from 'final-form';
 
 import { normalizeSubscriptions, pick } from './utils';
 
-import type { FormApi as FFFormApi } from 'final-form';
+import type { Store } from 'effector';
+import type { FormApi as FFFormApi, FieldState as FFFieldState } from 'final-form';
 import type { createFormState } from './createFormState';
 import type { FormSubscription, ValidationResult } from './types';
 
@@ -50,19 +51,21 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
       getValidator: (_?: P) => validateFx,
     };
 
-    type State = Pick<FieldState<P>, 'value' | (typeof subscribeOn)[number]>;
+    type State = Pick<FFFieldState<P>, 'value' | (typeof subscribeOn)[number]>;
 
     const subscriber = createEvent<any>();
 
-    finalForm.registerField(
-      name,
-      subscriber,
-      normalizeSubscriptions(fieldSubscriptionItems, [...subscribeOn, 'value']),
-      // @ts-expect-error
-      parsedConfig,
-    );
+    finalForm.batch(() => {
+      finalForm.registerField(
+        name,
+        subscriber,
+        normalizeSubscriptions(fieldSubscriptionItems, [...subscribeOn, 'value']),
+        // @ts-expect-error
+        parsedConfig,
+      );
 
-    revalidateFx();
+      revalidateFx();
+    });
 
     // @ts-expect-error
     const normalizedState = pick([...subscribeOn, 'value'], finalForm.getFieldState(name));
@@ -86,7 +89,6 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
       resetState: createEffect(() => {
         finalForm.resetFieldState(name);
       }),
-
       setValidationFn: (fn: Required<typeof validate>) => {
         // @ts-expect-error 123
         validateFx.use(fn);
