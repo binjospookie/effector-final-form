@@ -40,14 +40,14 @@ describe('api.reset', () => {
 
     {
       await api.reset({ firstName: undefined, lastName: undefined });
-      expect(firstNameField.$state.getState().value).toBe(undefined);
-      expect(lastNameField.$state.getState().value).toBe(undefined);
+      expect(firstNameField.$state.getState().value).toBe(null);
+      expect(lastNameField.$state.getState().value).toBe(null);
     }
 
     {
       await api.reset({ firstName: 'John' });
       expect(firstNameField.$state.getState().value).toBe('John');
-      expect(lastNameField.$state.getState().value).toBe(undefined);
+      expect(lastNameField.$state.getState().value).toBe(null);
     }
   });
 });

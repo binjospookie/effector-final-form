@@ -24,7 +24,7 @@ describe('validateOnBlur', () => {
       await field.api.changeFx('Bob');
 
       expect(form.$state.getState().errors).toStrictEqual({});
-      expect(field.$state.getState().error).toBe(undefined);
+      expect(field.$state.getState().error).toBe(null);
     }
 
     {
@@ -49,7 +49,7 @@ describe('validateOnBlur', () => {
       await waitForExpect(() => {
         expect(form.$state.getState().errors).toStrictEqual({});
       });
-      expect(field.$state.getState().error).toBe(undefined);
+      expect(field.$state.getState().error).toBe(null);
     }
   });
 });

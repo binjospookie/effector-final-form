@@ -43,8 +43,8 @@ const loginField = form.api.registerField<string>({
 });
 
 loginField.$state.watch(console.log);
-// {name: "login", value: undefined, error: undefined, validating: true}
-// {name: "login", error: "Incorrect login", value: undefined, validating: false}
+// {name: "login", value: null, error: null, validating: true}
+// {name: "login", error: "Incorrect login", value: null, validating: false}
 
 const passwordField = form.api.registerField<string>({
   name: 'password',
@@ -53,15 +53,15 @@ const passwordField = form.api.registerField<string>({
 });
 
 passwordField.$state.watch(console.log);
-// {name: "password", value: undefined, error: undefined, validating: true}
-// {name: "password", error: "Incorrect password", value: undefined, validating: false}
+// {name: "password", value: null, error: null, validating: true}
+// {name: "password", error: "Incorrect password", value: null, validating: false}
 
 loginField.api.changeFx('John');
-// {name: "login", error: undefined, value: "John", validating: true}
-// {name: "login", error: undefined, value: "John", validating: false}
+// {name: "login", error: null, value: "John", validating: true}
+// {name: "login", error: null, value: "John", validating: false}
 passwordField.api.changeFx('secret');
-// {name: "password", error: undefined, value: "secret", validating: true}
-// {name: "password", error: undefined, value: "secret", validating: false}
+// {name: "password", error: null, value: "secret", validating: true}
+// {name: "password", error: null, value: "secret", validating: false}
 form.api.submitFx();
 // {login: "John", password: "secret"}
 ```

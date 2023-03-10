@@ -9,7 +9,7 @@ describe('api.resetFieldState', () => {
       subscribeOn: ['values'],
     });
 
-    const field = api.registerField<string[]>({
+    const field = api.registerField({
       name: 'firstName',
       subscribeOn: [
         'submitError',
@@ -48,14 +48,14 @@ describe('api.resetFieldState', () => {
           dirty: true,
           dirtySinceLastSubmit: false,
           error: 'StaticError',
-          initial: undefined,
+          initial: null,
           invalid: true,
           length: 1,
           modified: true,
           modifiedSinceLastSubmit: false,
           name: 'firstName',
           pristine: false,
-          submitError: undefined,
+          submitError: null,
           submitFailed: false,
           submitSucceeded: false,
           submitting: false,
@@ -95,8 +95,8 @@ describe('api.resetFieldState', () => {
           active: false,
           dirty: true,
           dirtySinceLastSubmit: true,
-          error: undefined,
-          initial: undefined,
+          error: null,
+          initial: null,
           invalid: true,
           length: 1,
           modified: false,

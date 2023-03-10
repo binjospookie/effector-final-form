@@ -21,7 +21,7 @@ describe('api.restart', () => {
     {
       await field.api.changeFx(undefined);
 
-      expect(field.$state.getState().value).toBe(undefined);
+      expect(field.$state.getState().value).toBe(null);
       await waitForExpect(() => {
         expect(form.$state.getState().errors).toStrictEqual({ firstName: 'error' });
       });

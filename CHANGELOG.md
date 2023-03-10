@@ -5,6 +5,16 @@ title: Change Log
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](http://semver.org).
 
+## 0.9.0
+
+### Changed
+
+- `form.$state` & `field.$state` ==> `form.$` & `field.$`
+
+### Added
+
+- normalize `field.$` (error, initial, length, submitError, value are equals null)
+
 ## 0.8.0
 
 ### Changed

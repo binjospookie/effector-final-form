@@ -1,7 +1,7 @@
-import { Pick, Nil } from '../types';
+import { Pick } from '../types';
 import { equals } from './equals';
-
-const isNil = <T>(x: T | Nil): x is Nil => x === null || x === undefined;
+import { isNil } from './isNil';
+import { normalizeState } from './normalizeState';
 
 const pick = <K extends string, T extends Record<string, any>>(propsToPick: K[], input: T): Pick<T, K> =>
   // @ts-expect-error
@@ -17,4 +17,4 @@ const normalizeSubscriptions = <T extends readonly string[]>(a: T, b: T) =>
 
 const notEquals = (a: any, b: any) => !equals(a, b);
 
-export { pick, isNil, normalizeSubscriptions, notEquals };
+export { pick, isNil, normalizeSubscriptions, notEquals, normalizeState };

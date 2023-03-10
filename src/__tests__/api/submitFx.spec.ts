@@ -50,7 +50,7 @@ describe('api.submitFx', () => {
       await waitForExpect(() => {
         expect(form.$state.getState().submitting).toBe(false);
       });
-      expect(field.$state.getState()?.submitError).toBe(undefined);
+      expect(field.$state.getState()?.submitError).toBe(null);
       expect(field.$state.getState()?.submitSucceeded).toBe(true);
       expect(field.$state.getState()?.submitFailed).toBe(false);
       expect(form.$state.getState().submitErrors).toBe(null);

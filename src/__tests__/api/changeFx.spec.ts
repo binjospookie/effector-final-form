@@ -13,7 +13,7 @@ describe('api.changeFx', () => {
 
     {
       expect(form.$state.getState().values).toStrictEqual({});
-      expect(field.$state.getState().value).toBe(undefined);
+      expect(field.$state.getState().value).toBe(null);
     }
 
     {

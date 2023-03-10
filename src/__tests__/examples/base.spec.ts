@@ -43,7 +43,7 @@ describe('example', () => {
       await field.api.changeFx('Incorrect');
 
       await waitForExpect(() => {
-        expect(field.$state.getState().error).toBe(undefined);
+        expect(field.$state.getState().error).toBe(null);
         expect(field.$state.getState().value).toBe('Incorrect');
         expect(form.$state.getState().errors).toStrictEqual({});
       });
@@ -68,7 +68,7 @@ describe('example', () => {
     {
       await field.api.changeFx('John');
 
-      expect(field.$state.getState().error).toBe(undefined);
+      expect(field.$state.getState().error).toBe(null);
       expect(field.$state.getState().value).toBe('John');
       expect(form.$state.getState().errors).toStrictEqual({});
 

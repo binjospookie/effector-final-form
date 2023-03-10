@@ -1,10 +1,14 @@
 import { createEffect, createEvent, createStore, is, sample } from 'effector';
 import { fieldSubscriptionItems } from 'final-form';
 
-import { normalizeSubscriptions, pick } from './utils';
+import { normalizeSubscriptions, pick, normalizeState } from './utils';
 
 import type { Store } from 'effector';
-import type { FormApi as FFFormApi, FieldState as FFFieldState } from 'final-form';
+import type {
+  FormApi as FFFormApi,
+  FieldState as FFFieldState,
+  FieldSubscription as FFFieldSubscription,
+} from 'final-form';
 import type { createFormState } from './createFormState';
 import type { FormSubscription, ValidationResult } from './types';
 
@@ -34,7 +38,7 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
     (value?: FormValues[T]) =>
       finalForm.change(name, value);
   const registerField = <
-    P,
+    P extends FieldNames,
     T extends readonly (keyof RegisterFieldParams[2])[] = readonly (keyof RegisterFieldParams[2])[],
   >({
     name,
@@ -42,25 +46,31 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
     config = {},
     initialValue,
     validate,
-  }: RegisterFieldConfig<P, T>) => {
-    const validateFx = createEffect<P | undefined, ValidationResult>(validate ?? baseValidator);
-
+  }: RegisterFieldConfig<FormValues[P], T>) => {
+    type Value = FormValues[P];
+    const validateFx = createEffect<Value | undefined, ValidationResult>(validate ?? baseValidator);
+    const subscriptions = [...subscribeOn, 'name', 'value'];
     const parsedConfig = {
       ...config,
       initialValue: is.store(initialValue) ? initialValue.getState() : initialValue,
-      getValidator: (_?: P) => validateFx,
+      getValidator: (_?: Value) => validateFx,
     };
 
-    type State = Pick<FFFieldState<P>, 'value' | (typeof subscribeOn)[number]>;
+    type NormalizedState<K extends keyof FFFieldSubscription> = Omit<FFFieldState<Value>, K> & {
+      [k in K]: null | Exclude<FFFieldState<Value>[k], undefined>;
+    };
+    type State = Pick<NormalizedState<'error' | 'initial' | 'length' | 'submitError' | 'value'>, T[number]> & {
+      name: typeof name;
+    };
 
     const subscriber = createEvent<any>();
 
     finalForm.batch(() => {
       finalForm.registerField(
+        // @ts-expect-error
         name,
         subscriber,
-        normalizeSubscriptions(fieldSubscriptionItems, [...subscribeOn, 'name', 'value']),
-        // @ts-expect-error
+        normalizeSubscriptions(fieldSubscriptionItems, subscriptions),
         parsedConfig,
       );
 
@@ -68,11 +78,16 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
     });
 
     // @ts-expect-error
-    const normalizedState = pick([...subscribeOn, 'value'], finalForm.getFieldState(name));
-    const $state = createStore<State>({ ...normalizedState, name } as unknown as State);
+    const initialState = normalizeState(pick(subscriptions, finalForm.getFieldState(name)), subscriptions);
+    const $state = createStore<State>({ ...initialState, name } as unknown as State);
+
+    const fieldStateUpdated = subscriber.filterMap(({ blur, change, focus, ...rest }) =>
+      rest.name === name ? rest : undefined,
+    );
 
     sample({
-      clock: subscriber.filterMap(({ blur, change, focus, ...rest }) => (rest.name === name ? rest : undefined)),
+      clock: fieldStateUpdated,
+      fn: (s) => ({ ...normalizeState(s, subscriptions), name }),
       target: $state,
     });
 
