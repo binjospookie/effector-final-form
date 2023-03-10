@@ -1,4 +1,4 @@
-# effector-final-forms
+# effector-final-form
 
 ☄️ Effector bindings for Final Form 🏁 
 
