@@ -20,10 +20,10 @@ Takes the same [config](https://final-form.org/docs/final-form/types/Config) as 
 Returns:
 
 - [api](docs/api#api)
-- [$formState](docs/api#formstate)
+- [$state](docs/api#formstate)
 
 ```ts
-const { api, $formState } = createForm<{ firstName: string }>({
+const { api, $state } = createForm<{ firstName: string }>({
   onSubmit: async (f) => {
     await sleep(1000);
 
@@ -127,18 +127,18 @@ Submits the form if there are currently no validation errors. It may return unde
 () => Promise<Object | undefined | void>;
 ```
 
-### $formState
+### form.$state
 
 It is a _Store_ that stores the form state. The keys are taken from `subscribeOn` + `isValidationOnPause`
 
 ```ts title="Example"
-const { $formState } = createForm({
+const { $state } = createForm({
   onSubmit: () => {},
   initialValues: { firstName: '' },
   subscribeOn: ['active', 'errors'],
 });
 
-$formState.getState(); // { active: null, errors: {}, isValidationPaused: false }
+$state.getState(); // { active: null, errors: {}, isValidationPaused: false }
 ```
 
 ## Field

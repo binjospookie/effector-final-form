@@ -8,7 +8,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('example', () => {
   test('', async () => {
-    const { $formState, api } = createForm<{ firstName: string }>({
+    const form = createForm<{ firstName: string }>({
       onSubmit: async (f) => {
         await sleep(1000);
 
@@ -17,7 +17,7 @@ describe('example', () => {
       subscribeOn: ['values', 'errors', 'submitting', 'submitSucceeded', 'submitFailed', 'submitErrors'],
     });
 
-    const field = api.registerField({
+    const field = form.api.registerField({
       name: 'firstName',
       subscribeOn: ['value', 'error', 'initial'],
       initialValue: '',
@@ -32,12 +32,12 @@ describe('example', () => {
     expect(field.$state.getState().initial).toBe('');
     expect(field.$state.getState().value).toBe('');
 
-    expect($formState.getState().errors).toStrictEqual({ firstName: 'Can not be empty' });
-    expect($formState.getState().values).toStrictEqual({ firstName: '' });
-    expect($formState.getState().submitting).toBe(false);
-    expect($formState.getState().submitSucceeded).toBe(false);
-    expect($formState.getState().submitFailed).toBe(false);
-    expect($formState.getState().submitErrors).toBe(null);
+    expect(form.$state.getState().errors).toStrictEqual({ firstName: 'Can not be empty' });
+    expect(form.$state.getState().values).toStrictEqual({ firstName: '' });
+    expect(form.$state.getState().submitting).toBe(false);
+    expect(form.$state.getState().submitSucceeded).toBe(false);
+    expect(form.$state.getState().submitFailed).toBe(false);
+    expect(form.$state.getState().submitErrors).toBe(null);
 
     {
       await field.api.changeFx('Incorrect');
@@ -45,24 +45,24 @@ describe('example', () => {
       await waitForExpect(() => {
         expect(field.$state.getState().error).toBe(undefined);
         expect(field.$state.getState().value).toBe('Incorrect');
-        expect($formState.getState().errors).toStrictEqual({});
+        expect(form.$state.getState().errors).toStrictEqual({});
       });
     }
 
     {
-      const submitPromise = api.submitFx();
+      const submitPromise = form.api.submitFx();
 
-      expect($formState.getState().submitting).toBe(true);
+      expect(form.$state.getState().submitting).toBe(true);
 
       vi.useFakeTimers();
       vi.runOnlyPendingTimers();
       await submitPromise;
       vi.useRealTimers();
 
-      expect($formState.getState().submitting).toBe(false);
-      expect($formState.getState().submitSucceeded).toBe(false);
-      expect($formState.getState().submitFailed).toBe(true);
-      expect($formState.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
+      expect(form.$state.getState().submitting).toBe(false);
+      expect(form.$state.getState().submitSucceeded).toBe(false);
+      expect(form.$state.getState().submitFailed).toBe(true);
+      expect(form.$state.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
     }
 
     {
@@ -70,12 +70,12 @@ describe('example', () => {
 
       expect(field.$state.getState().error).toBe(undefined);
       expect(field.$state.getState().value).toBe('John');
-      expect($formState.getState().errors).toStrictEqual({});
+      expect(form.$state.getState().errors).toStrictEqual({});
 
-      const submitPromise = api.submitFx();
+      const submitPromise = form.api.submitFx();
 
       await waitForExpect(() => {
-        expect($formState.getState().submitting).toBe(true);
+        expect(form.$state.getState().submitting).toBe(true);
       });
 
       vi.useFakeTimers();
@@ -84,11 +84,11 @@ describe('example', () => {
       vi.useRealTimers();
 
       await waitForExpect(() => {
-        expect($formState.getState().submitting).toBe(false);
+        expect(form.$state.getState().submitting).toBe(false);
       });
-      expect($formState.getState().submitSucceeded).toBe(true);
-      expect($formState.getState().submitFailed).toBe(false);
-      expect($formState.getState().submitErrors).toBe(null);
+      expect(form.$state.getState().submitSucceeded).toBe(true);
+      expect(form.$state.getState().submitFailed).toBe(false);
+      expect(form.$state.getState().submitErrors).toBe(null);
     }
   });
 });

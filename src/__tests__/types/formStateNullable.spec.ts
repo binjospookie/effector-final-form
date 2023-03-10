@@ -8,12 +8,12 @@ const subscribeOn = ['active', 'errors', 'modified', 'submitErrors', 'touched', 
 const onSubmit = () => {};
 
 test('base', () => {
-  const { $formState } = createForm<{ lastName: number }, typeof subscribeOn>({
+  const form = createForm<{ lastName: number }, typeof subscribeOn>({
     onSubmit,
     subscribeOn,
   });
 
-  expectTypeOf($formState.getState()).toEqualTypeOf<{
+  expectTypeOf(form.$state.getState()).toEqualTypeOf<{
     active: 'lastName' | null;
     errors: AnyObject | null;
     modified: { [key: string]: boolean } | null;

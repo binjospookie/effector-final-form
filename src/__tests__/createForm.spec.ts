@@ -4,12 +4,12 @@ const onSubmitMock = () => {};
 
 describe('createForm', () => {
   test('without initial values', () => {
-    const { $formState } = createForm<{ firstName: string }>({
+    const form = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['initialValues', 'values'],
     });
 
-    expect($formState.getState()).toStrictEqual({
+    expect(form.$state.getState()).toStrictEqual({
       initialValues: null,
       isValidationPaused: false,
       values: {},

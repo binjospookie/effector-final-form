@@ -62,26 +62,26 @@ const validationFx = attach({
 
 sample({ clock: changeError, target: $error });
 
-const { $formState, api, $fields } = createForm<{ firstName: string; lastName: string }>({
+const form = createForm<{ firstName: string; lastName: string }>({
   onSubmit: () => {},
   subscribeOn: ['errors'],
 });
 
-const firstNameField = api.registerField({ name: 'firstName', subscribeOn: ['error'] });
-const lastNameField = api.registerField({ name: 'lastName', subscribeOn: ['error'] });
+const firstNameField = form.api.registerField({ name: 'firstName', subscribeOn: ['error'] });
+const lastNameField = form.api.registerField({ name: 'lastName', subscribeOn: ['error'] });
 
 // highlight-next-line
 sample({ clock: changeError, target: api.reValidateFx });
 
 // highlight-next-line
 firstNameField.api.setValidationFn(validationFx);
-// formState.errors = { firstName: 'error' }
+// form.$state.errors = { firstName: 'error' }
 // firstName.error = 'error'
 // lastName.error = undefined
 
 // highlight-next-line
 changeError('Can not be empty');
-// formState.errors = { firstName: 'Can not be empty' }
+// form.$state.errors = { firstName: 'Can not be empty' }
 // firstName.error = 'Can not be empty'
 // lastName.error = undefined
 ```

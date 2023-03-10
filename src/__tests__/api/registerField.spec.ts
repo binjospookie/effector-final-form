@@ -6,36 +6,36 @@ const onSubmitMock = () => {};
 
 describe('api.registerField', () => {
   test('with base value', async () => {
-    const { $formState, api } = createForm<{ firstName: string }>({
+    const form = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values'],
     });
 
-    const field = api.registerField({
+    const field = form.api.registerField({
       name: 'firstName',
       subscribeOn: ['value'],
       initialValue: 'defaultValue',
     });
 
-    expect($formState.getState().values).toStrictEqual({ firstName: 'defaultValue' });
+    expect(form.$state.getState().values).toStrictEqual({ firstName: 'defaultValue' });
     expect(field.$state.getState().value).toBe('defaultValue');
   });
 
   test('with value from $', async () => {
     const $initialValue = createStore('defaultValue');
 
-    const { $formState, api } = createForm<{ firstName: string }>({
+    const form = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values'],
     });
 
-    const field = api.registerField({
+    const field = form.api.registerField({
       name: 'firstName',
       subscribeOn: ['value'],
       initialValue: $initialValue,
     });
 
-    expect($formState.getState().values).toStrictEqual({ firstName: 'defaultValue' });
+    expect(form.$state.getState().values).toStrictEqual({ firstName: 'defaultValue' });
     expect(field.$state.getState().value).toBe('defaultValue');
   });
 });

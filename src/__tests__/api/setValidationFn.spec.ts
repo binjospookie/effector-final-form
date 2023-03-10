@@ -6,12 +6,12 @@ const onSubmitMock = () => {};
 
 describe('api.setValidationFn', () => {
   test('', async () => {
-    const { $formState, api } = createForm<{ firstName: string }>({
+    const form = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'errors'],
     });
 
-    const field = api.registerField({
+    const field = form.api.registerField({
       name: 'firstName',
       subscribeOn: ['error'],
       initialValue: 'John',
@@ -23,7 +23,7 @@ describe('api.setValidationFn', () => {
       await field.api.changeFx('Bob');
 
       await waitForExpect(() => {
-        expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
+        expect(form.$state.getState().errors).toStrictEqual({ firstName: 'Error' });
         expect(field.$state.getState().error).toBe('Error');
       });
     }
@@ -32,7 +32,7 @@ describe('api.setValidationFn', () => {
       field.api.setValidationFn(() => 'New validation error');
 
       await waitForExpect(() => {
-        expect($formState.getState().errors).toStrictEqual({ firstName: 'New validation error' });
+        expect(form.$state.getState().errors).toStrictEqual({ firstName: 'New validation error' });
         expect(field.$state.getState().error).toBe('New validation error');
       });
     }

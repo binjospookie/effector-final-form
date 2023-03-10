@@ -6,13 +6,13 @@ const onSubmitMock = () => {};
 
 describe('validateOnBlur', () => {
   test('', async () => {
-    const { $formState, api } = createForm<{ firstName: string }>({
+    const form = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'errors'],
       validateOnBlur: true,
     });
 
-    const field = api.registerField({
+    const field = form.api.registerField({
       name: 'firstName',
       subscribeOn: ['error'],
       initialValue: 'John',
@@ -23,7 +23,7 @@ describe('validateOnBlur', () => {
       field.api.focusFx();
       await field.api.changeFx('Bob');
 
-      expect($formState.getState().errors).toStrictEqual({});
+      expect(form.$state.getState().errors).toStrictEqual({});
       expect(field.$state.getState().error).toBe(undefined);
     }
 
@@ -31,7 +31,7 @@ describe('validateOnBlur', () => {
       await field.api.blurFx();
 
       await waitForExpect(() => {
-        expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
+        expect(form.$state.getState().errors).toStrictEqual({ firstName: 'Error' });
       });
 
       expect(field.$state.getState().error).toBe('Error');
@@ -40,14 +40,14 @@ describe('validateOnBlur', () => {
     {
       await field.api.focusFx();
       await field.api.changeFx('Steve');
-      expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
+      expect(form.$state.getState().errors).toStrictEqual({ firstName: 'Error' });
       expect(field.$state.getState().error).toBe('Error');
     }
 
     {
       await field.api.blurFx();
       await waitForExpect(() => {
-        expect($formState.getState().errors).toStrictEqual({});
+        expect(form.$state.getState().errors).toStrictEqual({});
       });
       expect(field.$state.getState().error).toBe(undefined);
     }

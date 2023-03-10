@@ -6,12 +6,12 @@ const onSubmitMock = () => {};
 
 describe('api.restart', () => {
   test('base', async () => {
-    const { api, $formState } = createForm<{ firstName: string }>({
+    const form = createForm<{ firstName: string }>({
       onSubmit: onSubmitMock,
       subscribeOn: ['values', 'initialValues', 'errors'],
     });
 
-    const field = api.registerField({
+    const field = form.api.registerField({
       name: 'firstName',
       subscribeOn: ['value'],
       initialValue: '',
@@ -23,17 +23,17 @@ describe('api.restart', () => {
 
       expect(field.$state.getState().value).toBe(undefined);
       await waitForExpect(() => {
-        expect($formState.getState().errors).toStrictEqual({ firstName: 'error' });
+        expect(form.$state.getState().errors).toStrictEqual({ firstName: 'error' });
       });
     }
 
     {
-      await api.restart();
+      await form.api.restart();
 
       expect(field.$state.getState().value).toBe('');
 
       await waitForExpect(() => {
-        expect($formState.getState().errors).toStrictEqual({});
+        expect(form.$state.getState().errors).toStrictEqual({});
       });
     }
   });

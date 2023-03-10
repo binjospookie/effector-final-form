@@ -37,7 +37,7 @@ const createFormState = <FormValues, T extends FormSubscription>(config: {
     setValidationPaused: createEvent<boolean>(),
   };
 
-  const $formState = createStore<State>(initialState, {
+  const $state = createStore<State>(initialState, {
     updateFilter: notEquals,
   })
     .on(formStateApi.update, (s, p) => Object.assign({}, s, p))
@@ -50,7 +50,7 @@ const createFormState = <FormValues, T extends FormSubscription>(config: {
     // @ts-expect-error
   }, normalizeSubscriptions(formSubscriptionItems, subscribeOn));
 
-  return { $formState, formStateApi };
+  return { $state, formStateApi };
 };
 
 export { createFormState };

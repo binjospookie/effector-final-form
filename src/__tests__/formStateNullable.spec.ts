@@ -4,21 +4,21 @@ import { createForm } from '../index';
 
 describe('formStateNullable', () => {
   test('', async () => {
-    const { $formState, api } = createForm<{ firstName: string }>({
+    const form = createForm<{ firstName: string }>({
       onSubmit: () => ({ firstName: 'Submit Error' }),
       subscribeOn: ['active', 'errors', 'modified', 'submitErrors', 'touched', 'visited'],
     });
 
     {
-      expect($formState.getState().active).toBe(null);
-      expect($formState.getState().errors).toStrictEqual({});
-      expect($formState.getState().modified).toStrictEqual({});
-      expect($formState.getState().submitErrors).toBe(null);
-      expect($formState.getState().touched).toStrictEqual({});
-      expect($formState.getState().visited).toStrictEqual({});
+      expect(form.$state.getState().active).toBe(null);
+      expect(form.$state.getState().errors).toStrictEqual({});
+      expect(form.$state.getState().modified).toStrictEqual({});
+      expect(form.$state.getState().submitErrors).toBe(null);
+      expect(form.$state.getState().touched).toStrictEqual({});
+      expect(form.$state.getState().visited).toStrictEqual({});
     }
 
-    const field = api.registerField({
+    const field = form.api.registerField({
       name: 'firstName',
       subscribeOn: [],
       initialValue: 'John',
@@ -28,18 +28,18 @@ describe('formStateNullable', () => {
     {
       await field.api.focusFx();
 
-      expect($formState.getState().active).toBe('firstName');
-      expect($formState.getState().errors).toStrictEqual({});
-      expect($formState.getState().modified).toStrictEqual({ firstName: false });
-      expect($formState.getState().submitErrors).toBe(null);
-      expect($formState.getState().touched).toStrictEqual({ firstName: false });
-      expect($formState.getState().visited).toStrictEqual({ firstName: true });
+      expect(form.$state.getState().active).toBe('firstName');
+      expect(form.$state.getState().errors).toStrictEqual({});
+      expect(form.$state.getState().modified).toStrictEqual({ firstName: false });
+      expect(form.$state.getState().submitErrors).toBe(null);
+      expect(form.$state.getState().touched).toStrictEqual({ firstName: false });
+      expect(form.$state.getState().visited).toStrictEqual({ firstName: true });
     }
 
     {
       await field.api.changeFx('Bob');
       await waitForExpect(() => {
-        expect($formState.getState().errors).toStrictEqual({ firstName: 'Error' });
+        expect(form.$state.getState().errors).toStrictEqual({ firstName: 'Error' });
       });
     }
 
@@ -47,13 +47,13 @@ describe('formStateNullable', () => {
       await field.api.changeFx('Steve');
 
       await waitForExpect(() => {
-        expect($formState.getState().errors).toStrictEqual({});
+        expect(form.$state.getState().errors).toStrictEqual({});
       }, 3000);
 
-      await api.submitFx();
+      await form.api.submitFx();
 
       await waitForExpect(() => {
-        expect($formState.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
+        expect(form.$state.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
       });
     }
   });
