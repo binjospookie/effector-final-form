@@ -12,23 +12,23 @@ const form = createForm<{ login: string; password: string }>({
   subscribeOn: ['submitSucceeded', 'submitting'],
 });
 
-const loginField = form.api.registerField<string>({
+const loginField = form.api.registerField({
   name: 'login',
   subscribeOn: ['value', 'error', 'validating'],
   validate: (x) => (x?.length >= 3 ? undefined : 'Incorrect login'),
 });
 
-loginField.$state.watch(console.log);
+loginField.$.watch(console.log);
 // {value: undefined, error: undefined, validating: true}
 // {name: "login", error: "Incorrect login", value: undefined, validating: false}
 
-const passwordField = form.api.registerField<string>({
+const passwordField = form.api.registerField({
   name: 'password',
   subscribeOn: ['value', 'error', 'validating'],
   validate: (x) => (x?.length >= 3 ? undefined : 'Incorrect password'),
 });
 
-passwordField.$state.watch(console.log);
+passwordField.$.watch(console.log);
 // {value: undefined, error: undefined, validating: true}
 // {name: "password", error: "Incorrect password", value: undefined, validating: false}
 
@@ -75,13 +75,13 @@ sample({ clock: changeError, target: api.reValidateFx });
 
 // highlight-next-line
 firstNameField.api.setValidationFn(validationFx);
-// form.$state.errors = { firstName: 'error' }
+// form.$.errors = { firstName: 'error' }
 // firstName.error = 'error'
 // lastName.error = undefined
 
 // highlight-next-line
 changeError('Can not be empty');
-// form.$state.errors = { firstName: 'Can not be empty' }
+// form.$.errors = { firstName: 'Can not be empty' }
 // firstName.error = 'Can not be empty'
 // lastName.error = undefined
 ```

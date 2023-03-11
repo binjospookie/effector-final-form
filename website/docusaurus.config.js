@@ -17,7 +17,7 @@ module.exports = {
       title: '☄️ effector-final-form 🏁',
       items: [
         {
-          href: 'https://stackblitz.com/edit/react-ts-xjh6yd?file=index.tsx',
+          href: 'https://stackblitz.com/edit/typescript-5fydjc?file=index.ts',
           position: 'left',
           label: 'Base demo',
         },

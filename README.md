@@ -36,23 +36,23 @@ const form = createForm<{ login: string; password: string }>({
   subscribeOn: ['submitSucceeded', 'submitting'],
 });
 
-const loginField = form.api.registerField<string>({
+const loginField = form.api.registerField({
   name: 'login',
   subscribeOn: ['value', 'error', 'validating'],
   validate: (x) => (x?.length >= 3 ? undefined : 'Incorrect login'),
 });
 
-loginField.$state.watch(console.log);
+loginField.$.watch(console.log);
 // {name: "login", value: null, error: null, validating: true}
 // {name: "login", error: "Incorrect login", value: null, validating: false}
 
-const passwordField = form.api.registerField<string>({
+const passwordField = form.api.registerField({
   name: 'password',
   subscribeOn: ['value', 'error', 'validating'],
   validate: (x) => (x?.length >= 3 ? undefined : 'Incorrect password'),
 });
 
-passwordField.$state.watch(console.log);
+passwordField.$.watch(console.log);
 // {name: "password", value: null, error: null, validating: true}
 // {name: "password", error: "Incorrect password", value: null, validating: false}
 

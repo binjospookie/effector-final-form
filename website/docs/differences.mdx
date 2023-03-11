@@ -12,15 +12,15 @@ In the _Final Form_ you can do most things using `form`.
 _effector-final-form_ provides several entities:
 
 ```ts
-const { $state, api } = createForm<{ firstName: string }>({
+const { $, api } = createForm<{ firstName: string }>({
   onSubmit: onSubmitMock,
   subscribeOn: ['initialValues', 'values'],
 });
 ```
 
-## form.$state no `undefined` values
+## form.$ no `undefined` values
 
-Values of some _FormState_ properties are forcibly replaced by null to avoid a situation where the derived from `form.$state` may contain _undefined_.
+Values of some _FormState_ properties are forcibly replaced by null to avoid a situation where the derived from `form.$` may contain _undefined_.
 
 List of values:
 
@@ -30,6 +30,10 @@ List of values:
 - submitErrors
 - touched
 - visited
+
+## field.$ no `undefined` values
+
+Values of some _FieldState_ properties are forcibly replaced by null to avoid a situation when yours derived `$` from `field.$` may contain _undefined_.
 
 ## `api.revalidateFx`
 
@@ -122,7 +126,7 @@ It is a way to find out if validation currently paused.
 form.isValidationPaused(); // boolean
 
 // effector-final-form
-form.$state.map((s) => s.isValidationPaused); // Store<boolean>
+form.$.map((s) => s.isValidationPaused); // Store<boolean>
 ```
 
 ## `form.registerField()`
@@ -151,7 +155,7 @@ It is a way to get the current state of the form without subscribing.
 const formState = form.getState();
 
 // effector-final-form
-const formState = form.$state.getState();
+const formState = form.$.getState();
 ```
 
 ## `form.getFieldState()`
@@ -179,5 +183,5 @@ const subscriber = () => {};
 form.subscribe(subscriber, { active: true });
 
 // effector-final-form
-sample({ clock: form.$state, target });
+sample({ clock: form.$, target });
 ```

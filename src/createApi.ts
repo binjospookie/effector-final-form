@@ -59,7 +59,29 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
     type NormalizedState<K extends keyof FFFieldSubscription> = Omit<FFFieldState<Value>, K> & {
       [k in K]: null | Exclude<FFFieldState<Value>[k], undefined>;
     };
-    type State = Pick<NormalizedState<'error' | 'initial' | 'length' | 'submitError' | 'value'>, T[number]> & {
+    type State = Pick<
+      NormalizedState<
+        | 'error'
+        | 'initial'
+        | 'length'
+        | 'submitError'
+        | 'value'
+        | 'active'
+        | 'dirty'
+        | 'invalid'
+        | 'modified'
+        | 'modifiedSinceLastSubmit'
+        | 'pristine'
+        | 'visited'
+        | 'validating'
+        | 'valid'
+        | 'touched'
+        | 'submitting'
+        | 'submitFailed'
+        | 'submitSucceeded'
+      >,
+      T[number]
+    > & {
       name: typeof name;
     };
 

@@ -19,11 +19,11 @@ Takes the same [config](https://final-form.org/docs/final-form/types/Config) as 
 
 Returns:
 
-- [api](docs/api#api)
-- [$state](docs/api#formstate)
+- api
+- $
 
 ```ts
-const { api, $state } = createForm<{ firstName: string }>({
+const { api, $ } = createForm<{ firstName: string }>({
   onSubmit: async (f) => {
     await sleep(1000);
 
@@ -44,7 +44,7 @@ If called, validation will be paused until resumeValidation() is called.
 
 ### registerField
 
-Registers a new field. Returns a field = $state (field state) and api for thid field.
+Registers a new field. Returns a field = $ (field state) and api for thid field.
 
 ```ts title="Example"
 const form = createForm<{ name: string }>({ onSubmit: () => {}, subscribe: ['active'] });
@@ -127,18 +127,18 @@ Submits the form if there are currently no validation errors. It may return unde
 () => Promise<Object | undefined | void>;
 ```
 
-### form.$state
+### form.$
 
 It is a _Store_ that stores the form state. The keys are taken from `subscribeOn` + `isValidationOnPause`
 
 ```ts title="Example"
-const { $state } = createForm({
+const form = createForm({
   onSubmit: () => {},
   initialValues: { firstName: '' },
   subscribeOn: ['active', 'errors'],
 });
 
-$state.getState(); // { active: null, errors: {}, isValidationPaused: false }
+form.$.getState(); // { active: null, errors: {}, isValidationPaused: false }
 ```
 
 ## Field
