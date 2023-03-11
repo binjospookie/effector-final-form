@@ -21,19 +21,19 @@ describe('api.restart', () => {
     {
       await field.api.changeFx(undefined);
 
-      expect(field.$state.getState().value).toBe(null);
+      expect(field.$.getState().value).toBe(null);
       await waitForExpect(() => {
-        expect(form.$state.getState().errors).toStrictEqual({ firstName: 'error' });
+        expect(form.$.getState().errors).toStrictEqual({ firstName: 'error' });
       });
     }
 
     {
       await form.api.restart();
 
-      expect(field.$state.getState().value).toBe('');
+      expect(field.$.getState().value).toBe('');
 
       await waitForExpect(() => {
-        expect(form.$state.getState().errors).toStrictEqual({});
+        expect(form.$.getState().errors).toStrictEqual({});
       });
     }
   });

@@ -111,7 +111,7 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
       },
     };
 
-    return { api, $state };
+    return { api, $: $state };
   };
 
   const pauseValidationHandler = () => {

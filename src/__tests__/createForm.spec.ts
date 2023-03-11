@@ -9,7 +9,7 @@ describe('createForm', () => {
       subscribeOn: ['initialValues', 'values'],
     });
 
-    expect(form.$state.getState()).toStrictEqual({
+    expect(form.$.getState()).toStrictEqual({
       initialValues: null,
       isValidationPaused: false,
       values: {},

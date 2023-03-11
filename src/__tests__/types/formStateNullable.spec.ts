@@ -13,7 +13,7 @@ test('base', () => {
     subscribeOn,
   });
 
-  expectTypeOf(form.$state.getState()).toEqualTypeOf<{
+  expectTypeOf(form.$.getState()).toEqualTypeOf<{
     active: 'lastName' | null;
     errors: AnyObject | null;
     modified: { [key: string]: boolean } | null;

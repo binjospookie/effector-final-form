@@ -43,7 +43,7 @@ describe('api.resetFieldState', () => {
       await field.api.changeFx(['John']);
 
       await waitForExpect(() => {
-        expect(field.$state.getState()).toStrictEqual({
+        expect(field.$.getState()).toStrictEqual({
           active: true,
           dirty: true,
           dirtySinceLastSubmit: false,
@@ -71,27 +71,27 @@ describe('api.resetFieldState', () => {
     {
       await field.api.changeFx(['Doe']);
       await waitForExpect(() => {
-        expect(field.$state.getState().value).toStrictEqual(['Doe']);
+        expect(field.$.getState().value).toStrictEqual(['Doe']);
       });
 
       await api.submitFx();
       await waitForExpect(() => {
-        expect(field.$state.getState().submitError).toBe('Submit Error');
+        expect(field.$.getState().submitError).toBe('Submit Error');
       });
     }
 
     {
       await field.api.changeFx(['']);
 
-      expect(field.$state.getState().modifiedSinceLastSubmit).toBe(true);
-      expect(field.$state.getState().dirtySinceLastSubmit).toBe(true);
+      expect(field.$.getState().modifiedSinceLastSubmit).toBe(true);
+      expect(field.$.getState().dirtySinceLastSubmit).toBe(true);
     }
 
     {
       field.api.resetState();
 
       await waitForExpect(() => {
-        expect(field.$state.getState()).toStrictEqual({
+        expect(field.$.getState()).toStrictEqual({
           active: false,
           dirty: true,
           dirtySinceLastSubmit: true,

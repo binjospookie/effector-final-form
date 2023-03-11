@@ -33,13 +33,13 @@ describe('api.submitFx', () => {
 
     {
       field.api.changeFx('John');
-      expect(form.$state.getState().modifiedSinceLastSubmit).toBe(false);
-      expect(field.$state.getState()?.modifiedSinceLastSubmit).toBe(false);
+      expect(form.$.getState().modifiedSinceLastSubmit).toBe(false);
+      expect(field.$.getState()?.modifiedSinceLastSubmit).toBe(false);
 
       const submitPromise = form.api.submitFx();
 
       await waitForExpect(() => {
-        expect(form.$state.getState().submitting).toBe(true);
+        expect(form.$.getState().submitting).toBe(true);
       });
 
       vi.useFakeTimers();
@@ -48,25 +48,25 @@ describe('api.submitFx', () => {
       vi.useRealTimers();
 
       await waitForExpect(() => {
-        expect(form.$state.getState().submitting).toBe(false);
+        expect(form.$.getState().submitting).toBe(false);
       });
-      expect(field.$state.getState()?.submitError).toBe(null);
-      expect(field.$state.getState()?.submitSucceeded).toBe(true);
-      expect(field.$state.getState()?.submitFailed).toBe(false);
-      expect(form.$state.getState().submitErrors).toBe(null);
-      expect(form.$state.getState().submitSucceeded).toBe(true);
-      expect(form.$state.getState().submitFailed).toBe(false);
+      expect(field.$.getState()?.submitError).toBe(null);
+      expect(field.$.getState()?.submitSucceeded).toBe(true);
+      expect(field.$.getState()?.submitFailed).toBe(false);
+      expect(form.$.getState().submitErrors).toBe(null);
+      expect(form.$.getState().submitSucceeded).toBe(true);
+      expect(form.$.getState().submitFailed).toBe(false);
     }
 
     {
       field.api.changeFx('');
-      expect(form.$state.getState().modifiedSinceLastSubmit).toBe(true);
-      expect(field.$state.getState()?.modifiedSinceLastSubmit).toBe(true);
+      expect(form.$.getState().modifiedSinceLastSubmit).toBe(true);
+      expect(field.$.getState()?.modifiedSinceLastSubmit).toBe(true);
 
       const submitPromise = form.api.submitFx();
 
       await waitForExpect(() => {
-        expect(form.$state.getState().submitting).toBe(true);
+        expect(form.$.getState().submitting).toBe(true);
       });
 
       vi.useFakeTimers();
@@ -75,14 +75,14 @@ describe('api.submitFx', () => {
       vi.useRealTimers();
 
       await waitForExpect(() => {
-        expect(form.$state.getState().submitting).toBe(false);
+        expect(form.$.getState().submitting).toBe(false);
       });
-      expect(field.$state.getState()?.submitError).toBe('Submit Error');
-      expect(field.$state.getState()?.submitSucceeded).toBe(false);
-      expect(field.$state.getState()?.submitFailed).toBe(true);
-      expect(form.$state.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
-      expect(form.$state.getState().submitSucceeded).toBe(false);
-      expect(form.$state.getState().submitFailed).toBe(true);
+      expect(field.$.getState()?.submitError).toBe('Submit Error');
+      expect(field.$.getState()?.submitSucceeded).toBe(false);
+      expect(field.$.getState()?.submitFailed).toBe(true);
+      expect(form.$.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
+      expect(form.$.getState().submitSucceeded).toBe(false);
+      expect(form.$.getState().submitFailed).toBe(true);
     }
   });
 });

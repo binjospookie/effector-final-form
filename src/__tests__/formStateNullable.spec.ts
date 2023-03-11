@@ -10,12 +10,12 @@ describe('formStateNullable', () => {
     });
 
     {
-      expect(form.$state.getState().active).toBe(null);
-      expect(form.$state.getState().errors).toStrictEqual({});
-      expect(form.$state.getState().modified).toStrictEqual({});
-      expect(form.$state.getState().submitErrors).toBe(null);
-      expect(form.$state.getState().touched).toStrictEqual({});
-      expect(form.$state.getState().visited).toStrictEqual({});
+      expect(form.$.getState().active).toBe(null);
+      expect(form.$.getState().errors).toStrictEqual({});
+      expect(form.$.getState().modified).toStrictEqual({});
+      expect(form.$.getState().submitErrors).toBe(null);
+      expect(form.$.getState().touched).toStrictEqual({});
+      expect(form.$.getState().visited).toStrictEqual({});
     }
 
     const field = form.api.registerField({
@@ -28,18 +28,18 @@ describe('formStateNullable', () => {
     {
       await field.api.focusFx();
 
-      expect(form.$state.getState().active).toBe('firstName');
-      expect(form.$state.getState().errors).toStrictEqual({});
-      expect(form.$state.getState().modified).toStrictEqual({ firstName: false });
-      expect(form.$state.getState().submitErrors).toBe(null);
-      expect(form.$state.getState().touched).toStrictEqual({ firstName: false });
-      expect(form.$state.getState().visited).toStrictEqual({ firstName: true });
+      expect(form.$.getState().active).toBe('firstName');
+      expect(form.$.getState().errors).toStrictEqual({});
+      expect(form.$.getState().modified).toStrictEqual({ firstName: false });
+      expect(form.$.getState().submitErrors).toBe(null);
+      expect(form.$.getState().touched).toStrictEqual({ firstName: false });
+      expect(form.$.getState().visited).toStrictEqual({ firstName: true });
     }
 
     {
       await field.api.changeFx('Bob');
       await waitForExpect(() => {
-        expect(form.$state.getState().errors).toStrictEqual({ firstName: 'Error' });
+        expect(form.$.getState().errors).toStrictEqual({ firstName: 'Error' });
       });
     }
 
@@ -47,13 +47,13 @@ describe('formStateNullable', () => {
       await field.api.changeFx('Steve');
 
       await waitForExpect(() => {
-        expect(form.$state.getState().errors).toStrictEqual({});
+        expect(form.$.getState().errors).toStrictEqual({});
       }, 3000);
 
       await form.api.submitFx();
 
       await waitForExpect(() => {
-        expect(form.$state.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
+        expect(form.$.getState().submitErrors).toStrictEqual({ firstName: 'Submit Error' });
       });
     }
   });

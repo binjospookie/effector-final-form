@@ -17,8 +17,8 @@ describe('api.registerField', () => {
       initialValue: 'defaultValue',
     });
 
-    expect(form.$state.getState().values).toStrictEqual({ firstName: 'defaultValue' });
-    expect(field.$state.getState().value).toBe('defaultValue');
+    expect(form.$.getState().values).toStrictEqual({ firstName: 'defaultValue' });
+    expect(field.$.getState().value).toBe('defaultValue');
   });
 
   test('with value from $', async () => {
@@ -35,7 +35,7 @@ describe('api.registerField', () => {
       initialValue: $initialValue,
     });
 
-    expect(form.$state.getState().values).toStrictEqual({ firstName: 'defaultValue' });
-    expect(field.$state.getState().value).toBe('defaultValue');
+    expect(form.$.getState().values).toStrictEqual({ firstName: 'defaultValue' });
+    expect(field.$.getState().value).toBe('defaultValue');
   });
 });

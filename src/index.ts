@@ -35,7 +35,7 @@ const createForm = <FormValues extends {}, T extends FormSubscription = FormSubs
     finalForm.mutators.__update__();
   });
 
-  const { $state, formStateApi } = createFormState<FormValues, T>({
+  const { $, formStateApi } = createFormState<FormValues, T>({
     finalForm,
     subscribeOn,
   });
@@ -48,7 +48,7 @@ const createForm = <FormValues extends {}, T extends FormSubscription = FormSubs
       revalidateFx,
       setSubmitFn: submitFx.use,
     },
-    $state,
+    $,
   };
 };
 

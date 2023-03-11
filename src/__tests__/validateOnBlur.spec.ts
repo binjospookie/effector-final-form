@@ -23,33 +23,33 @@ describe('validateOnBlur', () => {
       field.api.focusFx();
       await field.api.changeFx('Bob');
 
-      expect(form.$state.getState().errors).toStrictEqual({});
-      expect(field.$state.getState().error).toBe(null);
+      expect(form.$.getState().errors).toStrictEqual({});
+      expect(field.$.getState().error).toBe(null);
     }
 
     {
       await field.api.blurFx();
 
       await waitForExpect(() => {
-        expect(form.$state.getState().errors).toStrictEqual({ firstName: 'Error' });
+        expect(form.$.getState().errors).toStrictEqual({ firstName: 'Error' });
       });
 
-      expect(field.$state.getState().error).toBe('Error');
+      expect(field.$.getState().error).toBe('Error');
     }
 
     {
       await field.api.focusFx();
       await field.api.changeFx('Steve');
-      expect(form.$state.getState().errors).toStrictEqual({ firstName: 'Error' });
-      expect(field.$state.getState().error).toBe('Error');
+      expect(form.$.getState().errors).toStrictEqual({ firstName: 'Error' });
+      expect(field.$.getState().error).toBe('Error');
     }
 
     {
       await field.api.blurFx();
       await waitForExpect(() => {
-        expect(form.$state.getState().errors).toStrictEqual({});
+        expect(form.$.getState().errors).toStrictEqual({});
       });
-      expect(field.$state.getState().error).toBe(null);
+      expect(field.$.getState().error).toBe(null);
     }
   });
 });

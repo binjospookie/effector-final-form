@@ -23,8 +23,8 @@ describe('api.setValidationFn', () => {
       await field.api.changeFx('Bob');
 
       await waitForExpect(() => {
-        expect(form.$state.getState().errors).toStrictEqual({ firstName: 'Error' });
-        expect(field.$state.getState().error).toBe('Error');
+        expect(form.$.getState().errors).toStrictEqual({ firstName: 'Error' });
+        expect(field.$.getState().error).toBe('Error');
       });
     }
 
@@ -32,8 +32,8 @@ describe('api.setValidationFn', () => {
       field.api.setValidationFn(() => 'New validation error');
 
       await waitForExpect(() => {
-        expect(form.$state.getState().errors).toStrictEqual({ firstName: 'New validation error' });
-        expect(field.$state.getState().error).toBe('New validation error');
+        expect(form.$.getState().errors).toStrictEqual({ firstName: 'New validation error' });
+        expect(field.$.getState().error).toBe('New validation error');
       });
     }
   });

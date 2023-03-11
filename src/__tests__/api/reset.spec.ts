@@ -20,34 +20,34 @@ describe('api.reset', () => {
       initialValue: 'Doe',
     });
 
-    expect(firstNameField.$state.getState().initial).toBe('John');
-    expect(lastNameField.$state.getState().initial).toBe('Doe');
+    expect(firstNameField.$.getState().initial).toBe('John');
+    expect(lastNameField.$.getState().initial).toBe('Doe');
 
     {
       await firstNameField.api.changeFx('Bill');
       await lastNameField.api.changeFx('Smith');
 
-      expect(firstNameField.$state.getState().value).toBe('Bill');
-      expect(lastNameField.$state.getState().value).toBe('Smith');
+      expect(firstNameField.$.getState().value).toBe('Bill');
+      expect(lastNameField.$.getState().value).toBe('Smith');
     }
 
     {
       await api.reset({ firstName: 'biba', lastName: 'boba' });
 
-      expect(firstNameField.$state.getState().value).toBe('biba');
-      expect(lastNameField.$state.getState().value).toBe('boba');
+      expect(firstNameField.$.getState().value).toBe('biba');
+      expect(lastNameField.$.getState().value).toBe('boba');
     }
 
     {
       await api.reset({ firstName: undefined, lastName: undefined });
-      expect(firstNameField.$state.getState().value).toBe(null);
-      expect(lastNameField.$state.getState().value).toBe(null);
+      expect(firstNameField.$.getState().value).toBe(null);
+      expect(lastNameField.$.getState().value).toBe(null);
     }
 
     {
       await api.reset({ firstName: 'John' });
-      expect(firstNameField.$state.getState().value).toBe('John');
-      expect(lastNameField.$state.getState().value).toBe(null);
+      expect(firstNameField.$.getState().value).toBe('John');
+      expect(lastNameField.$.getState().value).toBe(null);
     }
   });
 });
