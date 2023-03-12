@@ -83,6 +83,7 @@ const createApi = <FormValues, T extends FormSubscription>(config: {
       T[number]
     > & {
       name: typeof name;
+      value: NonNullable<Value> | null;
     };
 
     const subscriber = createEvent<any>();
